@@ -1,0 +1,72 @@
+{
+  "method": "RDKit 2025.09.4, MMFF94, Chem.AssignStereochemistryFrom3D; validation only, no RDKit dependency at runtime",
+  "examples": {
+    "brclfr": {
+      "smiles": "F[C@H](Cl)Br",
+      "centers": [
+        [
+          2,
+          "R"
+        ]
+      ]
+    },
+    "brclfs": {
+      "smiles": "F[C@@H](Cl)Br",
+      "centers": [
+        [
+          2,
+          "S"
+        ]
+      ]
+    },
+    "butanolr": {
+      "smiles": "C[C@@H](O)CC",
+      "centers": [
+        [
+          2,
+          "R"
+        ]
+      ]
+    },
+    "butanols": {
+      "smiles": "C[C@H](O)CC",
+      "centers": [
+        [
+          2,
+          "S"
+        ]
+      ]
+    },
+    "lactic_s": {
+      "smiles": "C[C@H](O)C(=O)O",
+      "centers": [
+        [
+          2,
+          "S"
+        ]
+      ]
+    },
+    "alanine_s": {
+      "smiles": "N[C@@H](C)C(=O)O",
+      "centers": [
+        [
+          2,
+          "S"
+        ]
+      ]
+    },
+    "ditartaric": {
+      "smiles": "O=C(O)[C@H](O)[C@@H](O)C(=O)O",
+      "centers": [
+        [
+          4,
+          "R"
+        ],
+        [
+          6,
+          "R"
+        ]
+      ]
+    }
+  }
+}

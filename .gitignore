@@ -1,0 +1,16 @@
+# File personali e di lavoro: non includerli nel repository pubblico
+.env
+.env.*
+!.env.example
+.DS_Store
+Thumbs.db
+*.log
+node_modules/
+__pycache__/
+*.pyc
+.vscode/
+.idea/
+*.pem
+*.key
+*.p12
+*.pfx

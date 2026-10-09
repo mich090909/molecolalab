@@ -1,0 +1,13 @@
+{
+  "name": "molecolalab-web",
+  "version": "0.5.0",
+  "private": true,
+  "type": "module",
+  "description": "Independent educational 3D molecular editor with R/S and E/Z stereochemistry, CIP guidance and built-in Italian manual",
+  "scripts": {
+    "test": "node --test test/*.test.mjs",
+    "check": "node --check src/core.js && node --check src/stereo.js && node --check src/app.js",
+    "build:standalone": "node scripts/build-standalone.mjs"
+  },
+  "license": "MIT"
+}

@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#101a2e" />
+  <title>MolecolaLab Web — editor molecolare 3D</title>
+  <meta name="description" content="Prototipo didattico indipendente di modellazione molecolare tridimensionale, senza account né server." />
+  <link rel="stylesheet" href="./src/style.css" />
+</head>
+<body>
+<header class="header">
+  <div class="brand"><div class="brand-mark" aria-hidden="true"><span></span><span></span><span></span></div>
+    <div><strong>MolecolaLab <em>Web</em></strong><small>Editor molecolare 3D · prototipo v0.5</small></div></div>
+  <nav class="header-actions" aria-label="Comandi documento">
+    <button id="newBtn" title="Nuova molecola">Nuovo</button>
+    <button id="openBtn" title="Apri un file molecolare">Apri</button>
+    <div class="dropdown-group"><label class="sr-only" for="exportFormat">Formato di esportazione</label><select id="exportFormat"><option value="mlab">Progetto .json</option><option value="mol">MDL MOL .mol</option><option value="xyz">Coordinate .xyz</option><option value="cjson">Avogadro .cjson</option></select><button id="saveBtn" class="primary">Esporta</button></div>
+    <button id="undoBtn" title="Annulla (Ctrl+Z)">↶</button><button id="redoBtn" title="Ripeti (Ctrl+Y)">↷</button>
+    <button id="helpBtn" title="Guida e limitazioni">Guida</button>
+  </nav>
+</header>
+<main class="workspace">
+  <aside class="sidebar" aria-label="Strumenti di modellazione">
+    <section class="panel intro-panel"><p class="eyebrow">MODELLO</p><h1 id="moleculeName">Nuova molecola</h1><div class="chem-overview"><span id="formula" class="formula">—</span><small id="counts">0 atomi · 0 legami</small></div><small id="chargeLabel" class="muted">Carica netta: 0</small><div class="form-field small-gap"><label for="renameInput">Nome del modello</label><div class="inline-actions"><input id="renameInput" maxlength="80" aria-label="Nome della molecola" /><button id="renameBtn">Rinomina</button></div></div></section>
+    <section class="panel"><h2>Esempi molecolari</h2><label class="sr-only" for="presets">Molecola di esempio</label><select id="presets"><option value="">Seleziona un esempio…</option><option value="water">Acqua · H₂O</option><option value="methane">Metano · CH₄</option><option value="ethane">Etano · C₂H₆</option><option value="butane">Butano · C₄H₁₀</option><optgroup label="STEREOCHIMICA · E/Z"><option value="ezbutE">(E)-but-2-ene · trans</option><option value="ezbutZ">(Z)-but-2-ene · cis</option><option value="ezdichloroE">(E)-1,2-dicloroetene</option><option value="ezdichloroZ">(Z)-1,2-dicloroetene</option><option value="ezacidE">(E)-acido but-2-enoico</option><option value="ezacidZ">(Z)-acido but-2-enoico</option></optgroup><optgroup label="STEREOCHIMICA · R/S"><option value="brclfr">(R)-bromoclorofluorometano</option><option value="brclfs">(S)-bromoclorofluorometano</option><option value="butanolr">(R)-butan-2-olo</option><option value="butanols">(S)-butan-2-olo</option><option value="lactic_s">(S)-acido lattico</option><option value="alanine_s">(S)-alanina</option><option value="ditartaric">Acido tartarico (2R,3R)</option></optgroup><option value="ammonia">Ammoniaca · NH₃</option><option value="co2">Diossido di carbonio · CO₂</option><option value="ethene">Etene · C₂H₄</option><option value="ethyne">Etino · C₂H₂</option><option value="formaldehyde">Metanale · CH₂O</option><option value="benzene">Benzene · C₆H₆</option><option value="bf3">BF₃ · trigonale planare</option><option value="sf6">SF₆ · ottaedrica</option><option value="pcl5">PCl₅ · bipiramidale trigonale</option><option value="hcn">HCN · lineare</option><option value="ammonium">NH₄⁺ · tetraedrica</option><option value="carbonate">CO₃²⁻ · risonanza (una forma limite)</option></select></section>
+    <section class="panel"><h2>Strumento</h2><div class="toolgrid" role="group" aria-label="Modalità d'interazione"><button class="tool active" data-tool="view" aria-pressed="true">Ruota</button><button class="tool" data-tool="move" aria-pressed="false">Sposta</button><button class="tool" data-tool="atom" aria-pressed="false">Atomo</button><button class="tool" data-tool="bond" aria-pressed="false">Legame</button><button class="tool" data-tool="select" aria-pressed="false">Seleziona</button><button class="tool" data-tool="measure" aria-pressed="false">Misura</button><button class="tool" data-tool="delete" aria-pressed="false">Elimina</button></div>
+    <div class="form-field"><label for="elemSelect">Elemento</label><select id="elemSelect"></select></div>
+    <div class="quick-elements" id="quickElements" aria-label="Elementi frequenti"></div>
+    <div class="form-field"><label for="bondOrder">Ordine del legame</label><select id="bondOrder"><option value="1">Singolo</option><option value="2">Doppio</option><option value="3">Triplo</option></select></div>
+    <p class="hint" id="toolHint">Trascina per ruotare, scorri per ingrandire e clicca un atomo per esaminarlo.</p>
+    </section>
+    <section class="panel"><h2>Operazioni</h2><div class="stack"><button id="addHsBtn">Completa H (euristico)</button><button id="regularizeBtn">Riordina spaziatura 3D</button><button id="centerBtn">Centra coordinate</button><button id="resetCameraBtn">Reimposta la vista</button></div><p class="notice">La regolarizzazione non è una minimizzazione energetica MMFF/UFF. La saturazione degli H non gestisce tutte le cariche e le valenze.</p></section>
+  </aside>
+  <section class="viewer" aria-label="Visore della molecola">
+    <div class="viewer-top"><div class="mode-pill">VISTA 3D INTERATTIVA</div><label class="view-switch">Visualizzazione <select id="displayMode"><option value="ballstick">Sfere e bastoncini</option><option value="spacefill">Sfere di van der Waals (illustrative)</option><option value="sticks">Bastoncini</option><option value="wire">Filiforme</option></select></label></div>
+    <canvas id="canvas" aria-label="Molecola tridimensionale: utilizza il puntatore per esplorare e costruire" tabindex="0"></canvas>
+    <div class="viewer-empty" id="emptyState"><strong>Costruisci una molecola</strong><p>Scegli un esempio oppure seleziona «Atomo» e clicca sulla scena.</p><button id="startExample">Apri H₂O</button></div>
+    <div class="viewer-bottom"><span id="viewerMessage">Rotazione: trascina · Zoom: rotellina · Modifica: strumenti a sinistra</span><div class="axis-legend">x <i class="axis-red"></i> y <i class="axis-green"></i> z <i class="axis-blue"></i></div></div>
+  </section>
+  <aside class="sidebar inspector" aria-label="Proprietà e misure">
+    <section class="panel"><p class="eyebrow">SELEZIONE</p><h2 id="selectedTitle">Nessun atomo selezionato</h2><div id="selectedInfo" class="readout muted">Clicca un atomo o un legame nel visore.</div>
+      <div id="atomControls" hidden>
+        <div class="form-field small-gap"><label for="selectedElement">Sostituisci l’elemento</label><select id="selectedElement" disabled></select></div>
+        <div class="form-field small-gap"><label for="atomCharge">Carica formale</label><select id="atomCharge" disabled><option value="-3">−3</option><option value="-2">−2</option><option value="-1">−1</option><option value="0" selected>0</option><option value="1">+1</option><option value="2">+2</option><option value="3">+3</option></select></div>
+        <div class="form-field small-gap"><label>Coordinate cartesiane (Å)</label><div class="coord-inputs"><label>x <input id="atomX" type="number" step="0.01" min="-1000" max="1000" /></label><label>y <input id="atomY" type="number" step="0.01" min="-1000" max="1000" /></label><label>z <input id="atomZ" type="number" step="0.01" min="-1000" max="1000" /></label></div><button id="applyCoords">Applica coordinate</button></div>
+        <button id="removeSelected" disabled>Elimina atomo selezionato</button>
+      </div>
+      <div id="bondControls" hidden>
+        <div class="form-field small-gap"><label for="selectedBondOrder">Ordine del legame</label><select id="selectedBondOrder"><option value="1">Singolo</option><option value="2">Doppio</option><option value="3">Triplo</option></select></div>
+        <div class="form-field small-gap"><label for="selectedBondLength">Lunghezza del legame (Å)</label><div class="inline-actions"><input id="selectedBondLength" type="number" min="0.2" max="6" step="0.01" /><button id="applyBondLength">Applica</button></div><small class="muted">Sposta il secondo atomo del legame; gli altri non vengono ricalcolati.</small></div>
+        <button id="removeSelectedBond">Elimina legame</button>
+      </div>
+      <button id="clearSelection" class="small-action">Deseleziona (Esc)</button>
+    </section>
+    <section class="panel stereo-panel"><h2>Configurazione assoluta · R/S</h2>
+      <div id="stereoSummary" class="stereo-summary" role="status" aria-live="polite">Carica una molecola con un centro stereogenico.</div>
+      <div id="stereoInfo" class="readout muted" aria-live="polite">Seleziona un centro tetraedrico per vedere le priorità CIP 1–4 e la configurazione R/S.</div>
+      <label class="stereo-check"><input id="showRSLabels" type="checkbox" checked /> Mostra R/S e priorità sulla molecola</label>
+      <button id="mirrorBtn" class="small-action">Crea la molecola speculare (tutti i centri)</button>
+      <p class="notice">CIP didattico v0.5: quattro legami singoli e quattro sostituenti espliciti, grafi aciclici, C/Si/N⁺. Anelli, isotopi, H impliciti e casi CIP avanzati non sono assegnati. Una riflessione inverte <em>tutti</em> i centri, non uno solo.</p>
+    </section>
+    <section class="panel stereo-panel ez-panel" aria-labelledby="ezHeading"><h2 id="ezHeading">Isomeria geometrica · E/Z</h2>
+      <div id="ezSummary" class="stereo-summary" role="status" aria-live="polite">Carica (E)-but-2-ene o (Z)-but-2-ene.</div>
+      <div id="ezInfo" class="readout muted" aria-live="polite">Seleziona un doppio legame C=C o clicca il badge E/Z per vedere le priorità CIP sui due carboni.</div>
+      <label class="stereo-check"><input id="showEZLabels" type="checkbox" checked /> Mostra le etichette E/Z sul doppio legame</label>
+      <button id="invertEZBtn" class="small-action" disabled>Genera l’isomero geometrico opposto (E ↔ Z)</button>
+      <p class="notice">Il comando <strong>costruisce una nuova disposizione spaziale</strong>: non simula una rotazione fisicamente libera intorno al doppio legame. Regole CIP didattiche valide per C=C aciclici con H espliciti e geometria attendibile. Anelli, isotopi e casi avanzati non sono assegnati.</p>
+    </section>
+    <section class="panel"><h2>Geometria e VSEPR</h2><div id="vseprInfo" class="readout muted">Seleziona un atomo centrale (con almeno due vicini) per una stima.</div><p class="notice">Previsione didattica Lewis/VSEPR limitata a specie semplici: non è un calcolo quantomeccanico. Gli angoli si misurano separatamente sulle coordinate.</p></section>
+    <section class="panel"><h2>Misure geometriche</h2><div class="form-field"><label for="measurementType">Grandezza</label><select id="measurementType"><option value="2">Distanza · 2 atomi</option><option value="3">Angolo · 3 atomi</option><option value="4">Diedro · 4 atomi</option></select></div><div id="measurementResult" class="measurement-result">Seleziona lo strumento «Misura», poi clicca gli atomi nell'ordine richiesto.</div><button id="clearMeasurements">Azzera misura</button></section>
+    <section class="panel"><h2>Controllo dell’angolo diedro</h2>
+      <p class="hint">Indica quattro atomi legati in sequenza A–B–C–D (numeri visibili nell’elenco). Il legame centrale B–C deve essere singolo e non appartenere a un anello. Oppure scegli «Misura → Diedro» e seleziona i quattro atomi nel visore.</p>
+      <div class="atom-id-inputs">
+        <label>A <input id="torsionA" type="number" step="1" min="1" placeholder="1" /></label>
+        <label>B <input id="torsionB" type="number" step="1" min="1" placeholder="2" /></label>
+        <label>C <input id="torsionC" type="number" step="1" min="1" placeholder="3" /></label>
+        <label>D <input id="torsionD" type="number" step="1" min="1" placeholder="4" /></label>
+      </div>
+      <button id="readDihedralBtn" class="small-action">Leggi angolo diedro</button>
+      <div class="form-field small-gap"><label for="targetDihedral">Imposta diedro (da −180° a +180°)</label><div class="inline-actions"><input id="targetDihedral" type="number" step="1" min="-180" max="180" placeholder="60" /><button id="applyDihedralBtn">Applica</button></div></div>
+      <div id="dihedralFeedback" class="measurement-result" role="status">Carica «Butano», poi usa A=1, B=2, C=3, D=4.</div>
+      <p class="notice">Ruota rigidamente l’intero frammento sul lato di D, senza alterare gli altri legami. Non calcola energia, stabilità o conformeri ottimali.</p>
+    </section>
+    <section class="panel"><h2>Atomi del modello <span id="atomListCount"></span></h2><div id="atomList" class="atom-list"><span class="muted">Nessun atomo</span></div></section>
+    <section class="panel guide-panel" id="instructions" aria-labelledby="guideHeading">
+      <p class="eyebrow">MANUALE INTEGRATO</p><h2 id="guideHeading">Guida completa e istruzioni</h2>
+      <p class="hint">Apri le sezioni qui sotto per seguire le attività in classe o al laboratorio. Questa guida funziona anche offline.</p>
+      <div id="instructionsBody" class="instructions-body">
+        <details open><summary>1 · Inizia: carica una molecola e usa la vista</summary>
+          <ol><li>Apri <code>standalone.html</code> nel browser oppure <code>index.html</code> da un server locale.</li><li>Da <strong>Esempi molecolari</strong> scegli H₂O, butano o un esempio E/Z/R/S. Per partire da zero premi <strong>Nuovo</strong>.</li><li>Con <strong>Ruota</strong> trascina la scena; usa la rotellina o due dita per ingrandire. Doppio clic o <strong>Reimposta la vista</strong> ripristina l'inquadratura.</li><li>Scegli <strong>Visualizzazione</strong> per passare fra sfere e bastoncini, bastoncini, filiforme e sfere illustrative.</li></ol>
+        </details>
+        <details><summary>2 · Costruisci e modifica modellini molecolari</summary>
+          <ol><li>Seleziona un elemento (C, H, N, O, Cl ecc.) e lo strumento <strong>Atomo</strong>. Clicca un punto libero per inserirlo.</li><li>Clicca prima un atomo esistente e poi un punto libero per aggiungere un nuovo atomo collegato.</li><li>Per legare due atomi già presenti, scegli <strong>Legame</strong>, imposta singolo/doppio/triplo e clicca i due atomi.</li><li>Con <strong>Seleziona</strong> clicca un atomo per modificare elemento, carica e coordinate x/y/z. Clicca il centro del legame per cambiarne ordine o lunghezza (Å).</li><li>Con <strong>Sposta</strong> trascina un atomo; <strong>Elimina</strong> rimuove atomi/legami. <strong>Completa H</strong> e <strong>Riordina spaziatura</strong> sono solo euristici, non ottimizzazioni fisiche.</li></ol>
+        </details>
+        <details><summary>3 · Misura lunghezze, angoli e diedri</summary>
+          <ol><li>Nel pannello <strong>Misure geometriche</strong> scegli Distanza (2 atomi), Angolo (3) o Diedro (4).</li><li>Attiva lo strumento <strong>Misura</strong> e clicca gli atomi nell'ordine voluto.</li><li>Leggi la distanza in <strong>ångström (Å)</strong> o gli angoli in <strong>gradi (°)</strong>. Per l'angolo di legame il vertice è il secondo atomo.</li><li>Per modificare un diedro, inserisci A–B–C–D nel pannello <strong>Controllo dell'angolo diedro</strong>; il legame centrale B–C deve essere <strong>singolo e non in un anello</strong>.</li></ol>
+          <p>Le misure derivano dalle coordinate presenti, non da un calcolo energetico o sperimentale.</p>
+        </details>
+        <details><summary>4 · Assegna R/S ai centri tetraedrici</summary>
+          <ol><li>Carica <strong>(R)-butan-2-olo</strong> o <strong>(S)-alanina</strong>.</li><li>Seleziona il centro tetraedrico o il badge <strong>C…: R/S</strong> nel pannello R/S.</li><li>Leggi le priorità <strong>CIP 1–4</strong> e la configurazione assoluta. La rotazione della <em>vista</em> non modifica R/S.</li><li><strong>Crea la molecola speculare</strong> per generare l'enantiomero (inverte tutti i centri assegnabili), poi usa Annulla per tornare alla struttura iniziale.</li></ol>
+          <p>Supportati solo centri aciclici tetraedrici C, Si, N⁺ con quattro ligandi espliciti. Altri casi riportano un limite, non una configurazione fittizia.</p>
+        </details>
+        <details><summary>5 · Assegna E/Z ai doppi legami C=C</summary>
+          <ol><li>Carica <strong>(E)-but-2-ene</strong> o <strong>(Z)-1,2-dicloroetene</strong> dal menu.</li><li>Con <strong>Ruota</strong> o <strong>Seleziona</strong> clicca il <strong>centro del doppio legame C=C</strong>; in alternativa clicca il badge E/Z nel pannello.</li><li>Leggi le priorità CIP <strong>1 e 2 per ciascun carbonio</strong>: <strong>Z</strong> significa che i due sostituenti prioritari sono dallo <em>stesso</em> lato, <strong>E</strong> da lati <em>opposti</em>.</li><li>Premi <strong>Genera l'isomero geometrico opposto</strong> per ottenere E ↔ Z. Annulla ripristina l'isomero iniziale.</li></ol>
+          <p><strong>Importante:</strong> la generazione dell'altro isomero è una ricostruzione geometrica della struttura, <em>non</em> una torsione libera del legame C=C. Servono due sostituenti distinti su ogni carbonio, tutti espliciti; strutture cicliche, isotopi o geometrie non attendibili restano senza assegnazione.</p>
+        </details>
+        <details><summary>6 · VSEPR, valenze e limiti del modello</summary>
+          <ol><li>Seleziona un atomo centrale con più legami per leggere una previsione <strong>AXₙEₘ</strong> nel pannello VSEPR.</li><li>Confronta l'angolo VSEPR <em>previsto</em> con quello <em>misurato</em> sulle coordinate del modello.</li><li>Dopo ogni modifica di atomi, legami, cariche e coordinate, ricontrolla formula, valenze, geometria e stereochimica: non vengono ricalcolate automaticamente.</li></ol>
+          <p>Non sono inclusi un campo di forza MMFF/UFF, calcoli quantomeccanici, frequenze IR o modelli avanzati di risonanza.</p>
+        </details>
+        <details><summary>7 · Apri, esporta e conserva le molecole</summary>
+          <ol><li>Usa <strong>Esporta → Progetto .json</strong> per conservare coordinate, cariche e legami del documento MolecolaLab.</li><li><strong>Avogadro .cjson</strong> permette lo scambio di geometria e connettività di base; proprietà scientifiche avanzate potrebbero andare perse.</li><li><strong>.mol</strong> (MOL V2000) conserva connettività di base; <strong>.xyz</strong> conserva le coordinate ma <strong>non</strong> gli ordini di legame o la stereochimica.</li><li>Con <strong>Apri</strong> reimporta un file e controlla le etichette E/Z e R/S; conserva sempre una copia del file sorgente, soprattutto per molecole complesse.</li></ol>
+        </details>
+        <details><summary>8 · Annulla, errori e scorciatoie</summary>
+          <ul><li><strong>Ctrl/Cmd+Z</strong> annulla; <strong>Ctrl/Cmd+Y</strong> ripete (oppure Ctrl/Cmd+Shift+Z).</li><li><strong>Esc</strong> deseleziona; <strong>Canc/Backspace</strong> elimina l'oggetto selezionato quando non stai digitando.</li><li>Se compare <strong>R/S o E/Z non assegnato</strong>, verifica connettività, geometria e limitazioni prima di interpretare i risultati.</li><li>Per un risultato scientifico quantitativo, verifica con software validato e dati sperimentali.</li></ul>
+        </details>
+      </div>
+    </section>
+    <section class="panel footnote"><strong>Trasparenza scientifica</strong><p>Le geometrie degli esempi sono schemi didattici; la connettività XYZ viene stimata dalle distanze. Per risultati quantitativi utilizzare calcoli e software validati.</p><p><a href="./docs/LICENZE_E_LIMITI.md" target="_blank" rel="noopener">Licenze e limiti</a> · <a href="https://avogadro.cc/" target="_blank" rel="noopener noreferrer">Avogadro ufficiale</a></p></section>
+  </aside>
+</main>
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
+<input type="file" id="fileInput" accept=".mol,.sdf,.xyz,.json,.mlab,.cjson" hidden />
+<dialog id="helpDialog" aria-labelledby="helpDialogTitle"><div class="dialog-title"><h2 id="helpDialogTitle">Istruzioni complete · MolecolaLab 0.5</h2><button id="closeHelp">Chiudi</button></div><p class="muted">La stessa guida è disponibile anche nel pannello «Guida completa e istruzioni» in fondo alla colonna destra.</p><div id="helpDialogContent" class="guide-dialog-body"></div></dialog>
+<script type="module" src="./src/app.js"></script>
+</body>
+</html>

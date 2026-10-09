@@ -1,0 +1,1262 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#101a2e" />
+  <title>MolecolaLab Web — editor molecolare 3D</title>
+  <meta name="description" content="Prototipo didattico indipendente di modellazione molecolare tridimensionale, senza account né server." />
+  <style>
+:root{color-scheme:dark;--bg:#091120;--surface:#101c2f;--card:#15243a;--stroke:#29384e;--text:#edf3fe;--sub:#aabbd0;--accent:#70ded1;--gold:#ffce8b;--radius:14px;font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;font-size:14px;line-height:1.45}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text)}button,select{font:inherit;color:inherit}button{cursor:pointer;border:1px solid #35465d;background:#1b2d44;padding:8px 12px;border-radius:9px;transition:background .12s,border-color .12s}button:hover:not(:disabled){background:#2a405b;border-color:#607795}button:focus-visible,select:focus-visible,canvas:focus-visible{outline:2px solid var(--accent);outline-offset:2px}button:disabled{opacity:.4;cursor:not-allowed}button.primary{background:#2fafa1;border-color:#56d0c2;color:#072322;font-weight:750}.header{height:76px;display:flex;align-items:center;justify-content:space-between;padding:10px 20px;border-bottom:1px solid var(--stroke);gap:14px;background:#101b2c}.brand{display:flex;align-items:center;gap:12px;min-width:210px}.brand strong{font-size:18px;letter-spacing:-.5px}.brand em{color:#78dfd0;font-style:normal}.brand small{display:block;color:var(--sub);font-size:10.5px}.brand-mark{position:relative;width:42px;height:42px}.brand-mark:before,.brand-mark:after{content:"";height:4px;border-radius:3px;background:#8ed9dd;position:absolute;transform-origin:left center}.brand-mark:before{width:25px;transform:rotate(30deg);top:13px;left:10px}.brand-mark:after{width:23px;transform:rotate(-45deg);top:29px;left:9px}.brand-mark span{position:absolute;border-radius:50%;background:#78dfd0;box-shadow:0 0 10px #3c7f8555}.brand-mark span:nth-child(1){width:14px;height:14px;top:4px;left:4px}.brand-mark span:nth-child(2){width:18px;height:18px;top:24px;left:1px;background:#ffc884}.brand-mark span:nth-child(3){width:13px;height:13px;top:16px;left:29px;background:#d0adff}.header-actions{display:flex;align-items:center;gap:7px;flex-wrap:wrap;justify-content:flex-end}.dropdown-group{display:flex;gap:4px}.workspace{display:grid;grid-template-columns:282px minmax(0,1fr) 280px;height:calc(100vh - 76px);min-height:590px}.sidebar{overflow:auto;background:#0f1a2c;border-right:1px solid var(--stroke);padding:14px;scrollbar-color:#314861 transparent}.inspector{border-right:0;border-left:1px solid var(--stroke)}.panel{background:#142239;border:1px solid #273a52;border-radius:var(--radius);padding:15px;margin-bottom:13px}.intro-panel{background:linear-gradient(150deg,#1c3850,#172438)}h1,h2,p{margin-top:0}h1{font-size:18px;margin-bottom:9px;line-height:1.25}h2{font-size:13px;margin-bottom:13px;letter-spacing:.1px}.eyebrow{font-size:10px;letter-spacing:1.4px;color:#8ddece;font-weight:750;margin-bottom:5px}.chem-overview{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}.formula{font-size:17px;font-weight:750}.chem-overview small{font-size:11px;color:var(--sub)}select{width:100%;max-width:100%;padding:9px 10px;border:1px solid #34455e;background:#101d30;border-radius:8px}.toolgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}.tool{font-size:12px;padding:10px 4px}.tool.active{border-color:#6fe0d1;color:#affff5;background:#214957}.form-field{margin-top:15px}.form-field label{display:block;color:#bbcbdc;font-weight:600;font-size:11px;margin-bottom:5px}.form-field.small-gap{margin-top:12px}.hint,.notice{color:#a9bad0;font-size:11px;line-height:1.5;margin:12px 0 0}.notice{border-left:2px solid var(--gold);padding-left:9px}.quick-elements{display:flex;gap:5px;flex-wrap:wrap;margin-top:8px}.quick-elements button{padding:4px 9px;font-size:11px}.quick-elements button.active{border-color:#70ded1;color:#70ded1}.stack{display:grid;gap:7px}.stack button{text-align:left}.viewer{position:relative;min-width:0;overflow:hidden;background:radial-gradient(circle at 44% 40%,#14263e 0%,#0b1729 56%,#07101c 100%)}.viewer:before{content:"";position:absolute;inset:0;pointer-events:none;opacity:.23;background-image:linear-gradient(to right,#a5bbcf13 1px,transparent 1px),linear-gradient(to bottom,#a5bbcf13 1px,transparent 1px);background-size:36px 36px}.viewer canvas{position:absolute;inset:0;width:100%;height:100%;touch-action:none;cursor:grab;outline-offset:-3px}.viewer canvas.tool-mode{cursor:crosshair}.viewer-top,.viewer-bottom{position:absolute;z-index:2;left:0;right:0;padding:18px;display:flex;align-items:center;justify-content:space-between;gap:10px;pointer-events:none}.viewer-top{top:0}.viewer-bottom{bottom:0;align-items:flex-end;color:#96b2cf;font-size:11px}.viewer-top select{display:inline-block;width:auto;margin-left:7px;pointer-events:auto}.mode-pill{background:#193146bb;border:1px solid #3a6b77;border-radius:24px;color:#98e9dc;padding:5px 12px;font-size:10px;font-weight:750;letter-spacing:.8px}.view-switch{pointer-events:auto;background:#0b1b2ab8;border:1px solid #314559;border-radius:10px;color:#bdc9dc;padding:5px 10px;font-size:11px}.axis-legend{display:flex;align-items:center;gap:5px;white-space:nowrap}.axis-legend i{width:7px;height:7px;border-radius:50%;display:inline-block}.axis-red{background:#f06e78}.axis-green{background:#66cfa3}.axis-blue{background:#7198f1}.viewer-empty{position:absolute;left:50%;top:49%;transform:translate(-50%,-50%);z-index:1;background:#112339d9;border:1px solid #36566f;border-radius:16px;width:min(82%,360px);padding:25px;text-align:center;box-shadow:0 16px 45px #0005}.viewer-empty strong{font-size:20px}.viewer-empty p{color:#b0c4da;margin:10px 0 18px;font-size:13px}.viewer-empty button{border-color:#59d6c9;color:#bcfff1}.readout{background:#0f1b2c;border:1px solid #26374c;padding:12px;border-radius:9px;font-size:12px}.muted{color:#a4b7ce}.readout dl{margin:0;display:grid;grid-template-columns:1fr auto;gap:8px}.readout dt{color:#a2b5cc}.readout dd{margin:0;font-weight:650;text-align:right}.measurement-result{border:1px dashed #49677d;border-radius:9px;padding:14px 11px;color:#b6ccdf;font-size:12px;min-height:62px}.measurement-result strong{font-size:18px;color:#80e8d9;display:block}.measurement-result small{color:#b0c5d5}.measurement-result+.panel button{margin-top:8px}.atom-list{max-height:275px;overflow:auto;display:flex;flex-direction:column;gap:5px}.atom-list button{display:flex;justify-content:space-between;gap:8px;font-size:11px;text-align:left;padding:6px 9px}.atom-list button.active{border-color:var(--accent);background:#244e5b}.element-dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:8px;vertical-align:-1px;border:1px solid #ffffff30}.footnote{font-size:11px;color:#b4c6d9}.footnote strong{color:#e7edf5}.footnote p{margin:9px 0 0}.footnote a{color:#7de0d1}.toast{position:fixed;left:50%;bottom:22px;transform:translate(-50%,15px);background:#1f3849;border:1px solid #5b8c94;padding:10px 16px;color:#d8fff7;border-radius:10px;z-index:9;opacity:0;pointer-events:none;transition:.2s;box-shadow:0 8px 28px #0006;max-width:min(95vw,480px)}.toast.show{opacity:1;transform:translate(-50%,0)}dialog{max-width:min(630px,92vw);background:#16263b;color:#e7f1fb;border:1px solid #416074;border-radius:16px;padding:24px;box-shadow:0 20px 90px #000b}dialog::backdrop{background:#020b17b0}.dialog-title{display:flex;justify-content:space-between;align-items:center;gap:16px}.dialog-title h2{font-size:20px}.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}@media(max-width:1100px){.workspace{grid-template-columns:248px minmax(0,1fr) 244px}.sidebar{padding:9px}.panel{padding:11px}.header{padding:8px}.header-actions button{padding:7px}}@media(max-width:800px){.header{height:auto;flex-wrap:wrap}.header-actions{width:100%;justify-content:flex-start}.workspace{grid-template-columns:minmax(0,1fr);height:auto}.sidebar,.inspector{overflow:visible;border:0}.sidebar{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.panel{margin:0}.viewer{height:61vh;min-height:360px;grid-row:1}.inspector{grid-row:3}.sidebar:first-of-type{grid-row:2}.inspector .panel{min-height:130px}}@media(max-width:490px){.sidebar{grid-template-columns:1fr}.header-actions{gap:5px}.header-actions button{font-size:12px;padding:6px}.dropdown-group select{width:115px;font-size:12px}.view-switch{max-width:190px}.view-switch select{width:100%;margin:3px 0 0}.viewer-top{padding:9px;align-items:flex-start}.viewer-bottom{padding:10px}.axis-legend{display:none}}
+
+.viewer-empty{pointer-events:none}.viewer-empty button{pointer-events:auto}
+
+/* MolecolaLab 0.2: geometria modificabile, inspector accessibile */
+input{font:inherit;color:var(--text);background:#101d30;border:1px solid #34455e;border-radius:8px;padding:8px 9px;min-width:0;width:100%}
+input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+[hidden]{display:none!important}.inline-actions{display:flex;gap:6px;align-items:center}.inline-actions input{flex:1;min-width:0}.inline-actions button{flex:0 0 auto}
+.coord-inputs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:5px;margin:7px 0}.coord-inputs label{font-size:11px}.coord-inputs input{display:block;min-width:0;width:100%;margin-top:3px;padding:7px 5px;font-size:12px}
+#atomControls > button,#bondControls > button,#applyCoords{margin-top:9px;width:100%}.small-action{margin-top:12px;width:100%;font-size:11px;padding:7px}
+#chargeLabel{display:block;margin-top:8px}.vsepr-value{display:block;font-size:15px;color:#95eee0;font-weight:700}.vsepr-detail{display:block;font-size:11px;color:#b1c5db;margin-top:5px}.viewer canvas.move-mode{cursor:move}
+@media(max-width:1100px){.inline-actions{flex-wrap:wrap}.inline-actions button{flex:1}}
+
+/* v0.3: editing della torsione su catene aperte. */
+.atom-id-inputs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin-top:10px}
+.atom-id-inputs label{font-size:11px;color:var(--sub)}
+.atom-id-inputs input{margin-top:4px;font-size:12px;padding:7px 3px;text-align:center}
+#dihedralFeedback{margin-top:12px;min-height:54px;overflow-wrap:anywhere}
+
+/* v0.4: inspector e priorità Cahn–Ingold–Prelog */
+.stereo-summary{display:grid;gap:7px;margin-bottom:9px}.stereo-badges{display:flex;gap:6px;flex-wrap:wrap}
+.stereo-chip{font-size:12px;font-weight:760;padding:6px 9px;border-radius:20px;border:1px solid #739b99;background:#214452;color:#ddfff8}
+.stereo-chip.unresolved{border-color:#ac8e60;color:#ffe1af;background:#3b322b}
+.stereo-descriptor{display:block;font-size:23px;line-height:1.25;color:#96f5e4;margin-bottom:5px}
+.stereo-priorities-title{font-size:11px;color:#c8d5e5;font-weight:670;margin-top:7px}
+.stereo-priorities{padding:0;margin:6px 0 10px;list-style:none;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:5px;counter-reset:cip}
+.stereo-priorities li{background:#17334a;border:1px solid #31556d;border-radius:7px;padding:5px;font-weight:650;counter-increment:cip}
+.stereo-priorities li:before{content:counter(cip) " · ";color:#8be4d6}
+.stereo-note{display:block;color:#bdc8db;line-height:1.5;font-size:11px;margin-top:5px}
+.stereo-not-assigned{display:block;color:#f3d396;margin-bottom:4px}
+.stereo-check{display:flex;align-items:center;gap:8px;color:#dae6f6;font-size:11px;margin:12px 0 0;cursor:pointer}
+.stereo-check input{width:17px;height:17px;accent-color:#46bcb4;flex-shrink:0}
+#mirrorBtn{margin-top:10px}
+
+/* v0.5: E/Z diagnostics, comprehensive built-in Italian instructions */
+.ez-panel .stereo-descriptor{color:#c8b4ff}
+.ez-panel .stereo-chip.assigned{border-color:#a492e6;background:#322d4e;color:#e9dfff}
+.ez-priorities{margin-bottom:13px}
+.guide-panel{scroll-margin:18px}
+.guide-panel h2{font-size:17px;margin:0 0 9px}
+.instructions-body{margin-top:12px;display:grid;gap:8px}
+.instructions-body details{border:1px solid #354d68;border-radius:10px;background:#111e32;overflow:hidden}
+.instructions-body summary{padding:11px 12px;font-size:12px;font-weight:720;color:#dcf1ff;cursor:pointer;line-height:1.5}
+.instructions-body summary:hover{background:#233d54}
+.instructions-body details[open] summary{border-bottom:1px solid #31506a;color:#95ebd8}
+.instructions-body details ol,.instructions-body details ul{padding:0 12px 0 31px;font-size:12px;line-height:1.6;color:#c9daec}
+.instructions-body details li{margin:5px 0}
+.instructions-body details p{padding:0 12px;font-size:11px;line-height:1.55;color:#e0cfae}
+.instructions-body code{font-size:11px;background:#263c50;padding:1px 4px;border-radius:3px}
+#helpDialog{width:min(780px,94vw);max-height:85vh;overflow:auto}
+.guide-dialog-body{max-height:63vh;overflow:auto;padding-right:3px}
+.guide-dialog-body .instructions-body{display:grid;gap:7px}
+#helpDialog .dialog-title{position:sticky;top:-24px;background:#16263b;padding:7px 0 12px;z-index:2}
+@media(max-width:490px){#helpDialog{padding:15px}#helpDialog .dialog-title h2{font-size:15px}}
+
+</style>
+</head>
+<body>
+<header class="header">
+  <div class="brand"><div class="brand-mark" aria-hidden="true"><span></span><span></span><span></span></div>
+    <div><strong>MolecolaLab <em>Web</em></strong><small>Editor molecolare 3D · prototipo v0.5</small></div></div>
+  <nav class="header-actions" aria-label="Comandi documento">
+    <button id="newBtn" title="Nuova molecola">Nuovo</button>
+    <button id="openBtn" title="Apri un file molecolare">Apri</button>
+    <div class="dropdown-group"><label class="sr-only" for="exportFormat">Formato di esportazione</label><select id="exportFormat"><option value="mlab">Progetto .json</option><option value="mol">MDL MOL .mol</option><option value="xyz">Coordinate .xyz</option><option value="cjson">Avogadro .cjson</option></select><button id="saveBtn" class="primary">Esporta</button></div>
+    <button id="undoBtn" title="Annulla (Ctrl+Z)">↶</button><button id="redoBtn" title="Ripeti (Ctrl+Y)">↷</button>
+    <button id="helpBtn" title="Guida e limitazioni">Guida</button>
+  </nav>
+</header>
+<main class="workspace">
+  <aside class="sidebar" aria-label="Strumenti di modellazione">
+    <section class="panel intro-panel"><p class="eyebrow">MODELLO</p><h1 id="moleculeName">Nuova molecola</h1><div class="chem-overview"><span id="formula" class="formula">—</span><small id="counts">0 atomi · 0 legami</small></div><small id="chargeLabel" class="muted">Carica netta: 0</small><div class="form-field small-gap"><label for="renameInput">Nome del modello</label><div class="inline-actions"><input id="renameInput" maxlength="80" aria-label="Nome della molecola" /><button id="renameBtn">Rinomina</button></div></div></section>
+    <section class="panel"><h2>Esempi molecolari</h2><label class="sr-only" for="presets">Molecola di esempio</label><select id="presets"><option value="">Seleziona un esempio…</option><option value="water">Acqua · H₂O</option><option value="methane">Metano · CH₄</option><option value="ethane">Etano · C₂H₆</option><option value="butane">Butano · C₄H₁₀</option><optgroup label="STEREOCHIMICA · E/Z"><option value="ezbutE">(E)-but-2-ene · trans</option><option value="ezbutZ">(Z)-but-2-ene · cis</option><option value="ezdichloroE">(E)-1,2-dicloroetene</option><option value="ezdichloroZ">(Z)-1,2-dicloroetene</option><option value="ezacidE">(E)-acido but-2-enoico</option><option value="ezacidZ">(Z)-acido but-2-enoico</option></optgroup><optgroup label="STEREOCHIMICA · R/S"><option value="brclfr">(R)-bromoclorofluorometano</option><option value="brclfs">(S)-bromoclorofluorometano</option><option value="butanolr">(R)-butan-2-olo</option><option value="butanols">(S)-butan-2-olo</option><option value="lactic_s">(S)-acido lattico</option><option value="alanine_s">(S)-alanina</option><option value="ditartaric">Acido tartarico (2R,3R)</option></optgroup><option value="ammonia">Ammoniaca · NH₃</option><option value="co2">Diossido di carbonio · CO₂</option><option value="ethene">Etene · C₂H₄</option><option value="ethyne">Etino · C₂H₂</option><option value="formaldehyde">Metanale · CH₂O</option><option value="benzene">Benzene · C₆H₆</option><option value="bf3">BF₃ · trigonale planare</option><option value="sf6">SF₆ · ottaedrica</option><option value="pcl5">PCl₅ · bipiramidale trigonale</option><option value="hcn">HCN · lineare</option><option value="ammonium">NH₄⁺ · tetraedrica</option><option value="carbonate">CO₃²⁻ · risonanza (una forma limite)</option></select></section>
+    <section class="panel"><h2>Strumento</h2><div class="toolgrid" role="group" aria-label="Modalità d'interazione"><button class="tool active" data-tool="view" aria-pressed="true">Ruota</button><button class="tool" data-tool="move" aria-pressed="false">Sposta</button><button class="tool" data-tool="atom" aria-pressed="false">Atomo</button><button class="tool" data-tool="bond" aria-pressed="false">Legame</button><button class="tool" data-tool="select" aria-pressed="false">Seleziona</button><button class="tool" data-tool="measure" aria-pressed="false">Misura</button><button class="tool" data-tool="delete" aria-pressed="false">Elimina</button></div>
+    <div class="form-field"><label for="elemSelect">Elemento</label><select id="elemSelect"></select></div>
+    <div class="quick-elements" id="quickElements" aria-label="Elementi frequenti"></div>
+    <div class="form-field"><label for="bondOrder">Ordine del legame</label><select id="bondOrder"><option value="1">Singolo</option><option value="2">Doppio</option><option value="3">Triplo</option></select></div>
+    <p class="hint" id="toolHint">Trascina per ruotare, scorri per ingrandire e clicca un atomo per esaminarlo.</p>
+    </section>
+    <section class="panel"><h2>Operazioni</h2><div class="stack"><button id="addHsBtn">Completa H (euristico)</button><button id="regularizeBtn">Riordina spaziatura 3D</button><button id="centerBtn">Centra coordinate</button><button id="resetCameraBtn">Reimposta la vista</button></div><p class="notice">La regolarizzazione non è una minimizzazione energetica MMFF/UFF. La saturazione degli H non gestisce tutte le cariche e le valenze.</p></section>
+  </aside>
+  <section class="viewer" aria-label="Visore della molecola">
+    <div class="viewer-top"><div class="mode-pill">VISTA 3D INTERATTIVA</div><label class="view-switch">Visualizzazione <select id="displayMode"><option value="ballstick">Sfere e bastoncini</option><option value="spacefill">Sfere di van der Waals (illustrative)</option><option value="sticks">Bastoncini</option><option value="wire">Filiforme</option></select></label></div>
+    <canvas id="canvas" aria-label="Molecola tridimensionale: utilizza il puntatore per esplorare e costruire" tabindex="0"></canvas>
+    <div class="viewer-empty" id="emptyState"><strong>Costruisci una molecola</strong><p>Scegli un esempio oppure seleziona «Atomo» e clicca sulla scena.</p><button id="startExample">Apri H₂O</button></div>
+    <div class="viewer-bottom"><span id="viewerMessage">Rotazione: trascina · Zoom: rotellina · Modifica: strumenti a sinistra</span><div class="axis-legend">x <i class="axis-red"></i> y <i class="axis-green"></i> z <i class="axis-blue"></i></div></div>
+  </section>
+  <aside class="sidebar inspector" aria-label="Proprietà e misure">
+    <section class="panel"><p class="eyebrow">SELEZIONE</p><h2 id="selectedTitle">Nessun atomo selezionato</h2><div id="selectedInfo" class="readout muted">Clicca un atomo o un legame nel visore.</div>
+      <div id="atomControls" hidden>
+        <div class="form-field small-gap"><label for="selectedElement">Sostituisci l’elemento</label><select id="selectedElement" disabled></select></div>
+        <div class="form-field small-gap"><label for="atomCharge">Carica formale</label><select id="atomCharge" disabled><option value="-3">−3</option><option value="-2">−2</option><option value="-1">−1</option><option value="0" selected>0</option><option value="1">+1</option><option value="2">+2</option><option value="3">+3</option></select></div>
+        <div class="form-field small-gap"><label>Coordinate cartesiane (Å)</label><div class="coord-inputs"><label>x <input id="atomX" type="number" step="0.01" min="-1000" max="1000" /></label><label>y <input id="atomY" type="number" step="0.01" min="-1000" max="1000" /></label><label>z <input id="atomZ" type="number" step="0.01" min="-1000" max="1000" /></label></div><button id="applyCoords">Applica coordinate</button></div>
+        <button id="removeSelected" disabled>Elimina atomo selezionato</button>
+      </div>
+      <div id="bondControls" hidden>
+        <div class="form-field small-gap"><label for="selectedBondOrder">Ordine del legame</label><select id="selectedBondOrder"><option value="1">Singolo</option><option value="2">Doppio</option><option value="3">Triplo</option></select></div>
+        <div class="form-field small-gap"><label for="selectedBondLength">Lunghezza del legame (Å)</label><div class="inline-actions"><input id="selectedBondLength" type="number" min="0.2" max="6" step="0.01" /><button id="applyBondLength">Applica</button></div><small class="muted">Sposta il secondo atomo del legame; gli altri non vengono ricalcolati.</small></div>
+        <button id="removeSelectedBond">Elimina legame</button>
+      </div>
+      <button id="clearSelection" class="small-action">Deseleziona (Esc)</button>
+    </section>
+    <section class="panel stereo-panel"><h2>Configurazione assoluta · R/S</h2>
+      <div id="stereoSummary" class="stereo-summary" role="status" aria-live="polite">Carica una molecola con un centro stereogenico.</div>
+      <div id="stereoInfo" class="readout muted" aria-live="polite">Seleziona un centro tetraedrico per vedere le priorità CIP 1–4 e la configurazione R/S.</div>
+      <label class="stereo-check"><input id="showRSLabels" type="checkbox" checked /> Mostra R/S e priorità sulla molecola</label>
+      <button id="mirrorBtn" class="small-action">Crea la molecola speculare (tutti i centri)</button>
+      <p class="notice">CIP didattico v0.5: quattro legami singoli e quattro sostituenti espliciti, grafi aciclici, C/Si/N⁺. Anelli, isotopi, H impliciti e casi CIP avanzati non sono assegnati. Una riflessione inverte <em>tutti</em> i centri, non uno solo.</p>
+    </section>
+    <section class="panel stereo-panel ez-panel" aria-labelledby="ezHeading"><h2 id="ezHeading">Isomeria geometrica · E/Z</h2>
+      <div id="ezSummary" class="stereo-summary" role="status" aria-live="polite">Carica (E)-but-2-ene o (Z)-but-2-ene.</div>
+      <div id="ezInfo" class="readout muted" aria-live="polite">Seleziona un doppio legame C=C o clicca il badge E/Z per vedere le priorità CIP sui due carboni.</div>
+      <label class="stereo-check"><input id="showEZLabels" type="checkbox" checked /> Mostra le etichette E/Z sul doppio legame</label>
+      <button id="invertEZBtn" class="small-action" disabled>Genera l’isomero geometrico opposto (E ↔ Z)</button>
+      <p class="notice">Il comando <strong>costruisce una nuova disposizione spaziale</strong>: non simula una rotazione fisicamente libera intorno al doppio legame. Regole CIP didattiche valide per C=C aciclici con H espliciti e geometria attendibile. Anelli, isotopi e casi avanzati non sono assegnati.</p>
+    </section>
+    <section class="panel"><h2>Geometria e VSEPR</h2><div id="vseprInfo" class="readout muted">Seleziona un atomo centrale (con almeno due vicini) per una stima.</div><p class="notice">Previsione didattica Lewis/VSEPR limitata a specie semplici: non è un calcolo quantomeccanico. Gli angoli si misurano separatamente sulle coordinate.</p></section>
+    <section class="panel"><h2>Misure geometriche</h2><div class="form-field"><label for="measurementType">Grandezza</label><select id="measurementType"><option value="2">Distanza · 2 atomi</option><option value="3">Angolo · 3 atomi</option><option value="4">Diedro · 4 atomi</option></select></div><div id="measurementResult" class="measurement-result">Seleziona lo strumento «Misura», poi clicca gli atomi nell'ordine richiesto.</div><button id="clearMeasurements">Azzera misura</button></section>
+    <section class="panel"><h2>Controllo dell’angolo diedro</h2>
+      <p class="hint">Indica quattro atomi legati in sequenza A–B–C–D (numeri visibili nell’elenco). Il legame centrale B–C deve essere singolo e non appartenere a un anello. Oppure scegli «Misura → Diedro» e seleziona i quattro atomi nel visore.</p>
+      <div class="atom-id-inputs">
+        <label>A <input id="torsionA" type="number" step="1" min="1" placeholder="1" /></label>
+        <label>B <input id="torsionB" type="number" step="1" min="1" placeholder="2" /></label>
+        <label>C <input id="torsionC" type="number" step="1" min="1" placeholder="3" /></label>
+        <label>D <input id="torsionD" type="number" step="1" min="1" placeholder="4" /></label>
+      </div>
+      <button id="readDihedralBtn" class="small-action">Leggi angolo diedro</button>
+      <div class="form-field small-gap"><label for="targetDihedral">Imposta diedro (da −180° a +180°)</label><div class="inline-actions"><input id="targetDihedral" type="number" step="1" min="-180" max="180" placeholder="60" /><button id="applyDihedralBtn">Applica</button></div></div>
+      <div id="dihedralFeedback" class="measurement-result" role="status">Carica «Butano», poi usa A=1, B=2, C=3, D=4.</div>
+      <p class="notice">Ruota rigidamente l’intero frammento sul lato di D, senza alterare gli altri legami. Non calcola energia, stabilità o conformeri ottimali.</p>
+    </section>
+    <section class="panel"><h2>Atomi del modello <span id="atomListCount"></span></h2><div id="atomList" class="atom-list"><span class="muted">Nessun atomo</span></div></section>
+    <section class="panel guide-panel" id="instructions" aria-labelledby="guideHeading">
+      <p class="eyebrow">MANUALE INTEGRATO</p><h2 id="guideHeading">Guida completa e istruzioni</h2>
+      <p class="hint">Apri le sezioni qui sotto per seguire le attività in classe o al laboratorio. Questa guida funziona anche offline.</p>
+      <div id="instructionsBody" class="instructions-body">
+        <details open><summary>1 · Inizia: carica una molecola e usa la vista</summary>
+          <ol><li>Apri <code>standalone.html</code> nel browser oppure <code>index.html</code> da un server locale.</li><li>Da <strong>Esempi molecolari</strong> scegli H₂O, butano o un esempio E/Z/R/S. Per partire da zero premi <strong>Nuovo</strong>.</li><li>Con <strong>Ruota</strong> trascina la scena; usa la rotellina o due dita per ingrandire. Doppio clic o <strong>Reimposta la vista</strong> ripristina l'inquadratura.</li><li>Scegli <strong>Visualizzazione</strong> per passare fra sfere e bastoncini, bastoncini, filiforme e sfere illustrative.</li></ol>
+        </details>
+        <details><summary>2 · Costruisci e modifica modellini molecolari</summary>
+          <ol><li>Seleziona un elemento (C, H, N, O, Cl ecc.) e lo strumento <strong>Atomo</strong>. Clicca un punto libero per inserirlo.</li><li>Clicca prima un atomo esistente e poi un punto libero per aggiungere un nuovo atomo collegato.</li><li>Per legare due atomi già presenti, scegli <strong>Legame</strong>, imposta singolo/doppio/triplo e clicca i due atomi.</li><li>Con <strong>Seleziona</strong> clicca un atomo per modificare elemento, carica e coordinate x/y/z. Clicca il centro del legame per cambiarne ordine o lunghezza (Å).</li><li>Con <strong>Sposta</strong> trascina un atomo; <strong>Elimina</strong> rimuove atomi/legami. <strong>Completa H</strong> e <strong>Riordina spaziatura</strong> sono solo euristici, non ottimizzazioni fisiche.</li></ol>
+        </details>
+        <details><summary>3 · Misura lunghezze, angoli e diedri</summary>
+          <ol><li>Nel pannello <strong>Misure geometriche</strong> scegli Distanza (2 atomi), Angolo (3) o Diedro (4).</li><li>Attiva lo strumento <strong>Misura</strong> e clicca gli atomi nell'ordine voluto.</li><li>Leggi la distanza in <strong>ångström (Å)</strong> o gli angoli in <strong>gradi (°)</strong>. Per l'angolo di legame il vertice è il secondo atomo.</li><li>Per modificare un diedro, inserisci A–B–C–D nel pannello <strong>Controllo dell'angolo diedro</strong>; il legame centrale B–C deve essere <strong>singolo e non in un anello</strong>.</li></ol>
+          <p>Le misure derivano dalle coordinate presenti, non da un calcolo energetico o sperimentale.</p>
+        </details>
+        <details><summary>4 · Assegna R/S ai centri tetraedrici</summary>
+          <ol><li>Carica <strong>(R)-butan-2-olo</strong> o <strong>(S)-alanina</strong>.</li><li>Seleziona il centro tetraedrico o il badge <strong>C…: R/S</strong> nel pannello R/S.</li><li>Leggi le priorità <strong>CIP 1–4</strong> e la configurazione assoluta. La rotazione della <em>vista</em> non modifica R/S.</li><li><strong>Crea la molecola speculare</strong> per generare l'enantiomero (inverte tutti i centri assegnabili), poi usa Annulla per tornare alla struttura iniziale.</li></ol>
+          <p>Supportati solo centri aciclici tetraedrici C, Si, N⁺ con quattro ligandi espliciti. Altri casi riportano un limite, non una configurazione fittizia.</p>
+        </details>
+        <details><summary>5 · Assegna E/Z ai doppi legami C=C</summary>
+          <ol><li>Carica <strong>(E)-but-2-ene</strong> o <strong>(Z)-1,2-dicloroetene</strong> dal menu.</li><li>Con <strong>Ruota</strong> o <strong>Seleziona</strong> clicca il <strong>centro del doppio legame C=C</strong>; in alternativa clicca il badge E/Z nel pannello.</li><li>Leggi le priorità CIP <strong>1 e 2 per ciascun carbonio</strong>: <strong>Z</strong> significa che i due sostituenti prioritari sono dallo <em>stesso</em> lato, <strong>E</strong> da lati <em>opposti</em>.</li><li>Premi <strong>Genera l'isomero geometrico opposto</strong> per ottenere E ↔ Z. Annulla ripristina l'isomero iniziale.</li></ol>
+          <p><strong>Importante:</strong> la generazione dell'altro isomero è una ricostruzione geometrica della struttura, <em>non</em> una torsione libera del legame C=C. Servono due sostituenti distinti su ogni carbonio, tutti espliciti; strutture cicliche, isotopi o geometrie non attendibili restano senza assegnazione.</p>
+        </details>
+        <details><summary>6 · VSEPR, valenze e limiti del modello</summary>
+          <ol><li>Seleziona un atomo centrale con più legami per leggere una previsione <strong>AXₙEₘ</strong> nel pannello VSEPR.</li><li>Confronta l'angolo VSEPR <em>previsto</em> con quello <em>misurato</em> sulle coordinate del modello.</li><li>Dopo ogni modifica di atomi, legami, cariche e coordinate, ricontrolla formula, valenze, geometria e stereochimica: non vengono ricalcolate automaticamente.</li></ol>
+          <p>Non sono inclusi un campo di forza MMFF/UFF, calcoli quantomeccanici, frequenze IR o modelli avanzati di risonanza.</p>
+        </details>
+        <details><summary>7 · Apri, esporta e conserva le molecole</summary>
+          <ol><li>Usa <strong>Esporta → Progetto .json</strong> per conservare coordinate, cariche e legami del documento MolecolaLab.</li><li><strong>Avogadro .cjson</strong> permette lo scambio di geometria e connettività di base; proprietà scientifiche avanzate potrebbero andare perse.</li><li><strong>.mol</strong> (MOL V2000) conserva connettività di base; <strong>.xyz</strong> conserva le coordinate ma <strong>non</strong> gli ordini di legame o la stereochimica.</li><li>Con <strong>Apri</strong> reimporta un file e controlla le etichette E/Z e R/S; conserva sempre una copia del file sorgente, soprattutto per molecole complesse.</li></ol>
+        </details>
+        <details><summary>8 · Annulla, errori e scorciatoie</summary>
+          <ul><li><strong>Ctrl/Cmd+Z</strong> annulla; <strong>Ctrl/Cmd+Y</strong> ripete (oppure Ctrl/Cmd+Shift+Z).</li><li><strong>Esc</strong> deseleziona; <strong>Canc/Backspace</strong> elimina l'oggetto selezionato quando non stai digitando.</li><li>Se compare <strong>R/S o E/Z non assegnato</strong>, verifica connettività, geometria e limitazioni prima di interpretare i risultati.</li><li>Per un risultato scientifico quantitativo, verifica con software validato e dati sperimentali.</li></ul>
+        </details>
+      </div>
+    </section>
+    <section class="panel footnote"><strong>Trasparenza scientifica</strong><p>Le geometrie degli esempi sono schemi didattici; la connettività XYZ viene stimata dalle distanze. Per risultati quantitativi utilizzare calcoli e software validati.</p><p><a href="./docs/LICENZE_E_LIMITI.md" target="_blank" rel="noopener">Licenze e limiti</a> · <a href="https://avogadro.cc/" target="_blank" rel="noopener noreferrer">Avogadro ufficiale</a></p></section>
+  </aside>
+</main>
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
+<input type="file" id="fileInput" accept=".mol,.sdf,.xyz,.json,.mlab,.cjson" hidden />
+<dialog id="helpDialog" aria-labelledby="helpDialogTitle"><div class="dialog-title"><h2 id="helpDialogTitle">Istruzioni complete · MolecolaLab 0.5</h2><button id="closeHelp">Chiudi</button></div><p class="muted">La stessa guida è disponibile anche nel pannello «Guida completa e istruzioni» in fondo alla colonna destra.</p><div id="helpDialogContent" class="guide-dialog-body"></div></dialog>
+<script type="module">
+/** MolecolaLab Web: data model and numerical operations. Independent educational prototype. */
+const SYMBOLS = ('H He Li Be B C N O F Ne Na Mg Al Si P S Cl Ar K Ca Sc Ti V Cr Mn Fe Co Ni Cu Zn Ga Ge As Se Br Kr Rb Sr Y Zr Nb Mo Tc Ru Rh Pd Ag Cd In Sn Sb Te I Xe Cs Ba La Ce Pr Nd Pm Sm Eu Gd Tb Dy Ho Er Tm Yb Lu Hf Ta W Re Os Ir Pt Au Hg Tl Pb Bi Po At Rn Fr Ra Ac Th Pa U Np Pu Am Cm Bk Cf Es Fm Md No Lr Rf Db Sg Bh Hs Mt Ds Rg Cn Nh Fl Mc Lv Ts Og').split(' ');
+if(SYMBOLS.length !== 118) throw new Error('Errore tavola periodica');
+const data = {
+ H:[0.31,1,'#f9fafb'], He:[0.28,0,'#f5bde6'], Li:[1.28,1,'#c29dff'], Be:[0.96,2,'#8cddb9'],
+ B:[0.84,3,'#f8b879'], C:[0.76,4,'#303d52'], N:[0.71,3,'#4287ed'], O:[0.66,2,'#eb5261'],
+ F:[0.57,1,'#5dc99d'], Ne:[0.58,0,'#8ed9e8'], Na:[1.66,1,'#b88dfa'], Mg:[1.41,2,'#7fce9d'],
+ Al:[1.21,3,'#ced3de'], Si:[1.11,4,'#d19d71'], P:[1.07,3,'#ec9b3e'], S:[1.05,2,'#edc849'],
+ Cl:[1.02,1,'#51bd76'], Ar:[1.06,0,'#7ad0ef'], K:[2.03,1,'#a96fde'], Ca:[1.76,2,'#a1d4b2'],
+ Fe:[1.24,null,'#b99581'], Cu:[1.32,null,'#bd7c55'], Zn:[1.22,null,'#a7b7cd'],
+ Br:[1.20,1,'#a65b43'], I:[1.39,1,'#9364b9'], Xe:[1.40,0,'#7ea7cf'],
+};
+const ELEMENTS=SYMBOLS.map((symbol,i)=>({symbol,Z:i+1,radius:data[symbol]?.[0]??1.24,valence:data[symbol]?.[1]??null,color:data[symbol]?.[2]??'#b7c1d1'}));
+function element(symbol){return ELEMENTS.find(e=>e.symbol===symbol)||null;}
+function atomicElement(Z){return ELEMENTS[Number(Z)-1]||null;}
+function blank(){return {atoms:[],bonds:[],name:'Nuova molecola'};}
+function clone(doc){return JSON.parse(JSON.stringify(doc));}
+function atomId(doc){return Math.max(0,...doc.atoms.map(a=>a.id))+1;}
+function bondId(doc){return Math.max(0,...doc.bonds.map(b=>b.id))+1;}
+function findAtom(doc,id){return doc.atoms.find(a=>a.id===id);}
+function bondBetween(doc,a,b){return doc.bonds.find(k=>(k.a===a&&k.b===b)||(k.a===b&&k.b===a));}
+function addAtom(doc,symbol,x,y,z,connectedTo=null,bondOrder=1){
+ if(!element(symbol))throw new Error('Elemento sconosciuto: '+symbol);
+ if(![x,y,z].every(Number.isFinite))throw new Error('Coordinate non valide');
+ if(connectedTo!=null&&(!findAtom(doc,connectedTo)||![1,2,3].includes(bondOrder)))throw new Error('Collegamento o ordine di legame non valido');
+ const id=atomId(doc);doc.atoms.push({id,symbol,x,y,z,charge:0});
+ if(connectedTo!=null)doc.bonds.push({id:bondId(doc),a:connectedTo,b:id,order:bondOrder});
+ return id;
+}
+function setBond(doc,a,b,order=1){
+ if(a===b||!findAtom(doc,a)||!findAtom(doc,b))throw new Error('Seleziona due atomi distinti');
+ if(![1,2,3].includes(order))throw new Error('Ordine di legame non supportato');
+ const existing=bondBetween(doc,a,b);if(existing) existing.order=order;else doc.bonds.push({id:bondId(doc),a,b,order});
+}
+function eraseAtom(doc,id){doc.atoms=doc.atoms.filter(a=>a.id!==id);doc.bonds=doc.bonds.filter(b=>b.a!==id&&b.b!==id);}
+function eraseBond(doc,id){doc.bonds=doc.bonds.filter(b=>b.id!==id);}
+/** Geometry edits operate on coordinates and never imply an energy minimization. */
+function setAtomPosition(doc,id,x,y,z){
+ const atom=findAtom(doc,id);
+ if(!atom)throw Error('Atomo inesistente');
+ if(![x,y,z].every(n=>Number.isFinite(n)&&Math.abs(n)<=1000))throw Error('Coordinate ammesse da −1000 a +1000 Å');
+ Object.assign(atom,{x,y,z});
+}
+function setAtomElement(doc,id,symbol){
+ const a=findAtom(doc,id);if(!a||!element(symbol))throw Error('Atomo o elemento non valido');
+ a.symbol=symbol;
+}
+function setBondLength(doc,id,length){
+ const b=doc.bonds.find(b=>b.id===id);
+ if(!b)throw Error('Legame non trovato');
+ if(!Number.isFinite(length)||length<.2||length>6)throw Error('Lunghezza richiesta tra 0,20 e 6 Å');
+ const a=findAtom(doc,b.a),c=findAtom(doc,b.b),d=dist(a,c);
+ if(d<1e-8)throw Error('Atomi coincidenti: sposta un atomo prima di modificare il legame');
+ setAtomPosition(doc,c.id,a.x+(c.x-a.x)*length/d,a.y+(c.y-a.y)*length/d,a.z+(c.z-a.z)*length/d);
+}
+const netCharge=doc=>doc.atoms.reduce((s,a)=>s+(Number(a.charge)||0),0);
+/** Only simple main-group Lewis structures; experimental geometry comes from coordinate measurements. */
+function estimateVSEPR(doc,id){
+ const atom=findAtom(doc,id);
+ if(!atom)return null;
+ const neighbors=doc.bonds.filter(b=>b.a===id||b.b===id);
+ const n=neighbors.length;
+ if(n<2)return {supported:false,reason:'Servono almeno due atomi legati al centro per identificare una geometria.'};
+ const ve={B:3,C:4,N:5,O:6,F:7,Si:4,P:5,S:6,Cl:7,Br:7,I:7,Xe:8};
+ if(!Object.hasOwn(ve,atom.symbol))return {supported:false,reason:'Elemento non incluso nel modello VSEPR semplificato.'};
+ const charge=Number(atom.charge||0);
+ const bondedElectrons=neighbors.reduce((s,b)=>s+b.order,0);
+ const remaining=ve[atom.symbol]-charge-bondedElectrons;
+ if(remaining<0||remaining%2!==0)return {supported:false,reason:'Elettroni non appaiati o conteggio Lewis non compatibile: verificare legami e cariche.'};
+ const lonePairs=remaining/2,domains=n+lonePairs;
+ const electronic={2:'lineare',3:'trigonale planare',4:'tetraedrica',5:'bipiramidale trigonale',6:'ottaedrica'};
+ const shapes={
+  '2:0':'lineare','2:1':'angolare','2:2':'angolare','2:3':'lineare',
+  '3:0':'trigonale planare','3:1':'piramidale trigonale','3:2':'a T', '3:3':'a T',
+  '4:0':'tetraedrica','4:1':'a cavalletto (altalena)','4:2':'quadrata planare',
+  '5:0':'bipiramidale trigonale','5:1':'piramidale quadrata',
+  '6:0':'ottaedrica'
+ };
+ const shape=shapes[`${n}:${lonePairs}`];
+ if(!electronic[domains]||!shape)return {supported:false,reason:'Geometria fuori dal campo AXₙEₘ supportato.'};
+ return {supported:true,central:atom.symbol,bondedAtoms:n,lonePairs,electronDomains:domains,formula:`AX${n}${lonePairs?'E'+(lonePairs===1?'':lonePairs):''}`,
+  electronicGeometry:electronic[domains],molecularGeometry:shape,
+  note:'Stima Lewis/VSEPR per specie semplici a guscio chiuso; non sostituisce un calcolo elettronico né verifica risonanza o stabilità.'};
+}
+
+const dist=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y,a.z-b.z);
+const sub=(a,b)=>[a.x-b.x,a.y-b.y,a.z-b.z];
+const dot=(a,b)=>a.reduce((s,v,i)=>s+v*b[i],0);
+const cross=(a,b)=>[a[1]*b[2]-a[2]*b[1],a[2]*b[0]-a[0]*b[2],a[0]*b[1]-a[1]*b[0]];
+const mag=a=>Math.hypot(...a);
+const unit=a=>{const l=mag(a)||1;return a.map(v=>v/l)};
+function angle(a,b,c){const u=sub(a,b),v=sub(c,b);if(mag(u)<1e-8||mag(v)<1e-8)return NaN;return Math.acos(Math.max(-1,Math.min(1,dot(u,v)/mag(u)/mag(v))))*180/Math.PI;}
+function dihedral(p1,p2,p3,p4){
+ const b1=sub(p2,p1),b2=sub(p3,p2),b3=sub(p4,p3);
+ const n1=cross(b1,b2),n2=cross(b2,b3);
+ if(mag(n1)<1e-10||mag(n2)<1e-10)return NaN;
+ const m1=cross(unit(n1),unit(b2));return Math.atan2(dot(m1,unit(n2)),dot(unit(n1),unit(n2)))*180/Math.PI;
+}
+function formula(doc){const counts={};for(const a of doc.atoms)counts[a.symbol]=(counts[a.symbol]||0)+1;
+ const keys=Object.keys(counts).sort((a,b)=>a==='C'?-1:b==='C'?1:a==='H'?-1:b==='H'?1:a.localeCompare(b));
+ return keys.map(s=>s+(counts[s]>1?counts[s]:'' )).join('')||'—';}
+function centroid(doc){if(!doc.atoms.length)return {x:0,y:0,z:0};return doc.atoms.reduce((p,a)=>({x:p.x+a.x/doc.atoms.length,y:p.y+a.y/doc.atoms.length,z:p.z+a.z/doc.atoms.length}),{x:0,y:0,z:0});}
+function center(doc){const c=centroid(doc);for(const a of doc.atoms){a.x-=c.x;a.y-=c.y;a.z-=c.z;}}
+function suggestedPosition(doc,anchorId){
+ const a=findAtom(doc,anchorId);if(!a)return {x:0,y:0,z:0};
+ const neighbors=doc.bonds.filter(b=>b.a===a.id||b.b===a.id).map(b=>findAtom(doc,b.a===a.id?b.b:b.a));
+ let v=[1,0,0];if(neighbors.length){const sums=neighbors.reduce((s,n)=>{const d=unit(sub(n,a));return s.map((k,i)=>k-d[i]);},[0,0,0]);v=mag(sums)>.15?unit(sums):unit([0.3,0.7,0.85]);}
+ const seed=neighbors.length*1.17;v=unit([v[0]+0.19*Math.sin(seed),v[1]+0.23*Math.cos(seed),v[2]+0.25*Math.sin(seed+1)]);
+ return {x:a.x+v[0]*1.46,y:a.y+v[1]*1.46,z:a.z+v[2]*1.46};
+}
+function hydrogenate(doc){
+ // Simplified valence completion: neutral main-group single-center bonding only.
+ let total=0;
+ for(const a of [...doc.atoms]){
+  if(a.symbol==='H'||Number(a.charge||0)!==0)continue;
+  const val=element(a.symbol)?.valence;if(val==null||val===0)continue;
+  const neighbors=doc.bonds.filter(b=>b.a===a.id||b.b===a.id).map(b=>({b,other:findAtom(doc,b.a===a.id?b.b:b.a)}));
+  const missing=Math.max(0,Math.min(4,Math.round(val-neighbors.reduce((s,n)=>s+n.b.order,0))));
+  for(let i=0;i<missing;i++){
+   const attached=doc.bonds.filter(b=>b.a===a.id||b.b===a.id).map(b=>findAtom(doc,b.a===a.id?b.b:b.a));
+   let best=[1,0,0],score=-Infinity;
+   // Deterministic spherical search for maximum angular separation.
+   for(let k=0;k<110;k++){
+    const z=1-2*(k+.5)/110,phi=k*2.399963229728653;
+    const candidate=[Math.sqrt(1-z*z)*Math.cos(phi),Math.sqrt(1-z*z)*Math.sin(phi),z];
+    let s=0;for(const other of attached){const u=unit(sub(other,a));s+=Math.pow(1-dot(candidate,u),2);}
+    // Spread molecules deterministically if the atom has no neighbors.
+    if(!attached.length)s=candidate[0]*.0001;
+    if(s>score){score=s;best=candidate;}
+   }
+   const len=(element(a.symbol).radius+element('H').radius)*1.12;
+   addAtom(doc,'H',a.x+len*best[0],a.y+len*best[1],a.z+len*best[2],a.id,1);total++;
+  }
+ }
+ return total;
+}
+function autoBond(doc){
+ // XYZ cannot encode bonds; simple distance-based guess, not bond-order perception.
+ let made=0;
+ for(let i=0;i<doc.atoms.length;i++)for(let j=i+1;j<doc.atoms.length;j++){
+  const a=doc.atoms[i],b=doc.atoms[j];const d=dist(a,b),max=(element(a.symbol).radius+element(b.symbol).radius)*1.25;
+  if(d>.25&&d<=max&&!bondBetween(doc,a.id,b.id)){
+   const n1=doc.bonds.filter(k=>k.a===a.id||k.b===a.id).length;
+   const n2=doc.bonds.filter(k=>k.a===b.id||k.b===b.id).length;
+   const v1=element(a.symbol).valence??8,v2=element(b.symbol).valence??8;
+   if(n1<v1&&n2<v2){setBond(doc,a.id,b.id,1);made++;}
+  }
+ }
+ return made;
+}
+function regularize(doc,iterations=160){
+ // Graphical spacing only; NOT a molecular mechanics force field.
+ if(doc.atoms.length<2)return;
+ const origin=centroid(doc), bonded=new Set(doc.bonds.map(b=>[Math.min(b.a,b.b),Math.max(b.a,b.b)].join(':')));
+ for(let t=0;t<iterations;t++){
+  const forces=new Map(doc.atoms.map(a=>[a.id,[0,0,0]]));
+  for(const b of doc.bonds){const a=findAtom(doc,b.a),c=findAtom(doc,b.b);const delta=sub(c,a),d=mag(delta)||1e-5;
+   const target=(element(a.symbol).radius+element(c.symbol).radius)*(b.order===3?.87:b.order===2?.91:1.05);
+   const e=(d-target)*.035;const f=delta.map(v=>v/d*e);for(let k=0;k<3;k++){forces.get(a.id)[k]+=f[k];forces.get(c.id)[k]-=f[k];}
+  }
+  for(let i=0;i<doc.atoms.length;i++)for(let j=i+1;j<doc.atoms.length;j++){
+   const a=doc.atoms[i],b=doc.atoms[j],key=[Math.min(a.id,b.id),Math.max(a.id,b.id)].join(':');if(bonded.has(key))continue;
+   let delta=sub(b,a),d=mag(delta);
+   if(d<.01){delta=[.1,(j%3+1)*.12,.08];d=mag(delta);}
+   const min=(element(a.symbol).radius+element(b.symbol).radius)*1.35;
+   if(d<min){const f=delta.map(v=>v/d*(min-d)*.014);for(let k=0;k<3;k++){forces.get(a.id)[k]-=f[k];forces.get(b.id)[k]+=f[k];}}
+  }
+  for(const a of doc.atoms){const f=forces.get(a.id);a.x+=f[0];a.y+=f[1];a.z+=f[2];}
+ }
+ const after=centroid(doc);for(const a of doc.atoms){a.x+=origin.x-after.x;a.y+=origin.y-after.y;a.z+=origin.z-after.z;}
+}
+const xyznum=(n)=>Number(n).toFixed(5);
+function exportXYZ(doc){return `${doc.atoms.length}\n${doc.name||'MolecolaLab'} — formato XYZ; la connettivita non e inclusa\n`+doc.atoms.map(a=>`${a.symbol} ${xyznum(a.x)} ${xyznum(a.y)} ${xyznum(a.z)}`).join('\n')+'\n';}
+function importXYZ(content){
+ const lines=content.replace(/\r/g,'').split('\n');const n=Number(lines[0]?.trim());if(!Number.isInteger(n)||n<0||n>6000)throw Error('XYZ: conteggio atomi non valido');
+ if(lines.length<n+2)throw Error('XYZ: file incompleto');const doc=blank();doc.name=(lines[1]||'Molecola importata').slice(0,80);
+ for(let i=0;i<n;i++){
+  const p=lines[i+2].trim().split(/\s+/);const sym=/^\d+$/.test(p[0])?atomicElement(+p[0])?.symbol:p[0];if(p.length<4||!element(sym))throw Error('XYZ: elemento non valido alla riga '+(i+3));
+  const coords=p.slice(1,4).map(Number);if(!coords.every(Number.isFinite))throw Error('XYZ: coordinate non valide alla riga '+(i+3));
+  addAtom(doc,sym,...coords);
+ }
+ autoBond(doc);return doc;
+}
+const pad=(n,w)=>String(n).padStart(w,' ');
+const molcoord=n=>Number(n).toFixed(4).padStart(10,' ');
+function exportMOL(doc){
+ if(doc.atoms.length>999||doc.bonds.length>999)throw Error('MOL V2000 ammette massimo 999 atomi e legami');
+ const lines=[(doc.name||'MolecolaLab').slice(0,80),'  MolecolaLab Web v0.2','',`${pad(doc.atoms.length,3)}${pad(doc.bonds.length,3)}  0  0  0  0            999 V2000`];
+ for(const a of doc.atoms)lines.push(`${molcoord(a.x)}${molcoord(a.y)}${molcoord(a.z)} ${a.symbol.padEnd(3,' ')} 0  0  0  0  0  0  0  0  0  0  0  0`);
+ for(const b of doc.bonds)lines.push(`${pad(doc.atoms.findIndex(a=>a.id===b.a)+1,3)}${pad(doc.atoms.findIndex(a=>a.id===b.b)+1,3)}${pad(b.order,3)}  0  0  0  0`);
+ const charged=doc.atoms.map((a,i)=>({i:i+1,charge:a.charge||0})).filter(c=>c.charge);
+ for(let i=0;i<charged.length;i+=8){const slice=charged.slice(i,i+8);lines.push(`M  CHG${pad(slice.length,3)}${slice.map(c=>pad(c.i,4)+pad(c.charge,4)).join('')}`);}
+ lines.push('M  END');return lines.join('\n')+'\n';
+}
+function importMOL(content){
+ const lines=content.replace(/\r/g,'').split('\n');if(lines.length<5)throw Error('MOL incompleto');
+ const counts=lines[3];if(!/V2000/.test(counts))throw Error('Supportato solo MOL V2000');
+ const n=Number(counts.slice(0,3)),m=Number(counts.slice(3,6));if(!Number.isInteger(n)||!Number.isInteger(m)||n<0||m<0||n>999||m>999)throw Error('Conteggio MOL non valido');
+ if(lines.length<4+n+m)throw Error('MOL: righe insufficienti');
+ const doc=blank();doc.name=(lines[0]||'Molecola MOL').trim().slice(0,80);
+ for(let i=0;i<n;i++){
+  const line=lines[4+i],sym=line.slice(31,34).trim(),coords=[line.slice(0,10),line.slice(10,20),line.slice(20,30)].map(v=>Number(v.trim()));
+  if(!element(sym)||!coords.every(Number.isFinite))throw Error('MOL: atomo '+(i+1)+' non valido');addAtom(doc,sym,...coords);
+ }
+ for(let j=0;j<m;j++){
+  const ln=lines[4+n+j],a=Number(ln.slice(0,3)),b=Number(ln.slice(3,6)),order=Number(ln.slice(6,9));
+  if(a<1||a>n||b<1||b>n||!Number.isInteger(a)||!Number.isInteger(b)||![1,2,3].includes(order))throw Error('MOL: legame '+(j+1)+' non valido');setBond(doc,a,b,order);
+ }
+ for(const line of lines.slice(4+n+m))if(line.startsWith('M  CHG')){
+  const pairs=Number(line.slice(6,9));for(let i=0;i<pairs;i++){const idx=Number(line.slice(9+i*8,13+i*8)),charge=Number(line.slice(13+i*8,17+i*8));if(findAtom(doc,idx))findAtom(doc,idx).charge=charge;}
+ }
+ return doc;
+}
+/** Chemical JSON (CJSON) interchange: original implementation following OpenChemistry's public schema.
+ * Supported: atomic numbers, Cartesian coordinates, formal charges, integer single/double/triple bonds.
+ * Do not silently infer topology or claim to preserve other CJSON scientific properties. */
+function exportCJSON(doc){
+ const indices=new Map(doc.atoms.map((a,i)=>[a.id,i]));
+ const payload={chemicalJson:1,name:String(doc.name||'MolecolaLab').slice(0,80),
+  atoms:{elements:{number:doc.atoms.map(a=>element(a.symbol).Z)},
+   coords:{'3d':doc.atoms.flatMap(a=>[a.x,a.y,a.z])},
+   formalCharges:doc.atoms.map(a=>a.charge||0)},
+  bonds:{connections:{index:doc.bonds.flatMap(b=>[indices.get(b.a),indices.get(b.b)])},
+   order:doc.bonds.map(b=>b.order)}};
+ return JSON.stringify(payload,null,2)+'\n';
+}
+function importCJSON(text){
+ let x;
+ try{x=JSON.parse(text);}catch{throw Error('CJSON: JSON non valido');}
+ if(!x||typeof x!=='object'||x.chemicalJson!==1||!x.atoms)
+  throw Error('CJSON: richiesto chemicalJson: 1 e un oggetto atoms');
+ if(x.unitCell||x.atoms.coords?.['3dFractional'])
+  throw Error('CJSON: celle periodiche e coordinate frazionarie non supportate; il file originale resta invariato');
+ const numbers=x.atoms.elements?.number,coords=x.atoms.coords?.['3d'];
+ if(!Array.isArray(numbers)||!Array.isArray(coords))throw Error('CJSON: elementi o coordinate 3D mancanti');
+ const n=numbers.length;
+ if(n>6000||coords.length!==3*n)throw Error('CJSON: dimensione elenco coordinate incoerente o molecola troppo grande');
+ if(!coords.every(v=>typeof v==='number'&&Number.isFinite(v)&&Math.abs(v)<=1000))throw Error('CJSON: coordinate cartesiane non valide (limite ±1000 Å)');
+ const charges=x.atoms.formalCharges??Array(n).fill(0);
+ if(!Array.isArray(charges)||charges.length!==n||charges.some(v=>!Number.isInteger(v)||Math.abs(v)>8))
+  throw Error('CJSON: cariche formali non valide');
+ const total=charges.reduce((sum,v)=>sum+v,0);
+ if(x.properties?.totalCharge!==undefined && (!Number.isInteger(x.properties.totalCharge)||x.properties.totalCharge!==total))
+  throw Error('CJSON: carica totale non coerente con le cariche formali; interrompo per evitare perdite');
+ const d=blank();d.name=typeof x.name==='string'?(x.name.slice(0,80)||'Molecola CJSON'):'Molecola CJSON';
+ for(let i=0;i<n;i++){
+  const z=numbers[i];if(!Number.isInteger(z)||!atomicElement(z))throw Error('CJSON: numero atomico non valido');
+  const id=addAtom(d,atomicElement(z).symbol,...coords.slice(3*i,3*i+3));
+  findAtom(d,id).charge=charges[i];
+ }
+ if(x.bonds!==undefined){
+  const links=x.bonds.connections?.index,orders=x.bonds.order;
+  if(!Array.isArray(links)||!Array.isArray(orders)||orders.length>20000||links.length!==orders.length*2)
+   throw Error('CJSON: indici dei legami non validi');
+  const seen=new Set();
+  for(let i=0;i<orders.length;i++){
+   const a=links[2*i],b=links[2*i+1],order=orders[i];
+   if(!Number.isInteger(a)||!Number.isInteger(b)||a<0||b<0||a>=n||b>=n||a===b||![1,2,3].includes(order))
+    throw Error('CJSON: legame non supportato (aromatico/frazionario incluso) o indice non valido');
+   const key=[Math.min(a,b),Math.max(a,b)].join('-');
+   if(seen.has(key))throw Error('CJSON: legame duplicato');seen.add(key);
+   setBond(d,a+1,b+1,order);
+  }
+ }
+ return d;
+}
+/** CJSON can contain spectroscopy, orbitals, unit cells etc. Inform before discarding them. */
+function unhandledCJSONFields(text){
+ const x=typeof text==='string'?JSON.parse(text):text;
+ if(!x||typeof x!=='object'||x.chemicalJson!==1)return [];
+ const extra=[];
+ const topKnown=new Set(['chemicalJson','name','atoms','bonds']);
+ for(const key of Object.keys(x))if(!topKnown.has(key)){
+  if(key==='properties'&&x.properties&&Object.keys(x.properties).every(k=>k==='totalCharge'))continue;
+  extra.push(key);
+ }
+ const atomKnown=new Set(['elements','coords','formalCharges']);
+ if(x.atoms&&typeof x.atoms==='object')for(const key of Object.keys(x.atoms))if(!atomKnown.has(key))extra.push('atoms.'+key);
+ const coordsKnown=new Set(['3d']);
+ if(x.atoms?.coords)for(const key of Object.keys(x.atoms.coords))if(!coordsKnown.has(key))extra.push('atoms.coords.'+key);
+ if(x.bonds&&typeof x.bonds==='object')for(const key of Object.keys(x.bonds))if(!['connections','order'].includes(key))extra.push('bonds.'+key);
+ return extra;
+}
+
+/** Change a torsion A-B-C-D by rotating the entire D-side of the acyclic B-C single bond.
+ * The B-C axis remains fixed; ring bonds and multiple bonds are intentionally rejected.
+ * This is a coordinate transform, not a force-field optimization. */
+function setDihedral(doc,aId,bId,cId,dId,target){
+ if(!Number.isFinite(target)||target< -180||target>180)throw Error('Diedro richiesto tra −180° e +180°');
+ const ids=[aId,bId,cId,dId];
+ if(new Set(ids).size!==4)throw Error('Seleziona quattro atomi distinti A–B–C–D');
+ const atoms=ids.map(id=>findAtom(doc,id));
+ if(atoms.some(a=>!a))throw Error('Uno o più atomi non esistono');
+ if(!bondBetween(doc,aId,bId)||!bondBetween(doc,cId,dId))throw Error('Gli atomi devono formare una catena A–B–C–D');
+ const pivot=bondBetween(doc,bId,cId);
+ if(!pivot)throw Error('Il legame centrale B–C non esiste');
+ if(pivot.order!==1)throw Error('Si possono ruotare solo legami centrali singoli');
+ // Remove B–C from the graph. The C-side must be disconnected from B.
+ const adjacency=new Map(doc.atoms.map(a=>[a.id,[]]));
+ for(const bond of doc.bonds){
+  if(bond.id===pivot.id)continue;
+  adjacency.get(bond.a).push(bond.b);adjacency.get(bond.b).push(bond.a);
+ }
+ const moving=new Set([cId]),queue=[cId];
+ for(let i=0;i<queue.length;i++)for(const other of adjacency.get(queue[i]))if(!moving.has(other)){moving.add(other);queue.push(other);}
+ if(moving.has(bId))throw Error('Il legame centrale appartiene a un anello: rotazione bloccata');
+ if(!moving.has(dId)||moving.has(aId))throw Error('La catena selezionata non definisce il lato rotante');
+ const old=dihedral(...atoms);
+ if(!Number.isFinite(old))throw Error('Diedro non definito: tre atomi collineari o atomi coincidenti');
+ const [b,c]=[atoms[1],atoms[2]],axis=sub(c,b),norm=mag(axis);
+ if(norm<1e-8)throw Error('Asse del legame centrale degenerato');
+ const u=axis.map(v=>v/norm);
+ const delta=((target-old+540)%360)-180;
+ const t=-delta*Math.PI/180,co=Math.cos(t),si=Math.sin(t);
+ const moved=[];
+ for(const id of moving){if(id===cId)continue;
+  const p=findAtom(doc,id),v=sub(p,b),pr=cross(u,v),project=dot(u,v);
+  moved.push([p,{x:b.x+v[0]*co+pr[0]*si+u[0]*project*(1-co),
+    y:b.y+v[1]*co+pr[1]*si+u[1]*project*(1-co),
+    z:b.z+v[2]*co+pr[2]*si+u[2]*project*(1-co)}]);
+ }
+ // All positions are computed before mutating the document, so failures are atomic.
+ for(const [p,q] of moved)setAtomPosition(doc,p.id,q.x,q.y,q.z);
+ const achieved=dihedral(...ids.map(id=>findAtom(doc,id)));
+ if(!Number.isFinite(achieved)||Math.abs((((achieved-target+540)%360)-180))>0.001)
+  throw Error('Impossibile raggiungere il diedro richiesto');
+ return {before:old,after:achieved,moved:moved.length};
+}
+
+function exportProject(doc){return JSON.stringify({format:'molecolalab-v1',molecule:doc},null,2)+'\n';}
+function importProject(text){const x=JSON.parse(text);if(x.format!=='molecolalab-v1'||!x.molecule||!Array.isArray(x.molecule.atoms)||!Array.isArray(x.molecule.bonds))throw Error('File di progetto non valido');
+ const d=x.molecule;if(d.atoms.length>6000||d.bonds.length>20000)throw Error('Progetto troppo grande');
+ const ids=new Set();for(const a of d.atoms){if(!element(a.symbol)||!Number.isInteger(a.id)||a.id<1||ids.has(a.id)||![a.x,a.y,a.z].every(Number.isFinite)||!Number.isInteger(a.charge??0)||Math.abs(a.charge??0)>8)throw Error('Atomo nel progetto non valido');ids.add(a.id);}
+ const bondIds=new Set(),pairs=new Set();
+ for(const b of d.bonds){const pair=[b.a,b.b].sort((x,y)=>x-y).join(':');if(!ids.has(b.a)||!ids.has(b.b)||b.a===b.b||!Number.isInteger(b.id)||b.id<1||bondIds.has(b.id)||pairs.has(pair)||![1,2,3].includes(b.order))throw Error('Legame nel progetto non valido');bondIds.add(b.id);pairs.add(pair);}
+ if(typeof d.name!=='string'||d.name.length>120)throw Error('Nome del progetto non valido');
+ return clone(d);
+}
+function molecule(name,atomSpec,bondSpec){const d=blank();d.name=name;for(const [s,x,y,z] of atomSpec)addAtom(d,s,x,y,z);for(const [a,b,o=1] of bondSpec)setBond(d,a,b,o);return d;}
+const PRESETS={
+ // E/Z examples: explicit hydrogens, generated offline from RDKit ETKDG + MMFF94.
+ ezbutE:()=>molecule("(E)-but-2-ene",[["C",1.94965,-0.00545,-0.03846],["C",0.50963,-0.16136,-0.40525],["C",-0.50963,0.16136,0.40525],["C",-1.94965,0.00545,0.03846],["H",2.45178,-0.9768,-0.08005],["H",2.44326,0.66802,-0.74569],["H",2.07871,0.40287,0.96886],["H",0.30738,-0.56326,-1.39578],["H",-0.30737,0.56326,1.39578],["H",-2.45179,0.9768,0.08007],["H",-2.44325,-0.66803,0.74568],["H",-2.07871,-0.40285,-0.96887]],[[1,2,1],[2,3,2],[3,4,1],[1,5,1],[1,6,1],[1,7,1],[2,8,1],[3,9,1],[4,10,1],[4,11,1],[4,12,1]]),
+ ezbutZ:()=>molecule("(Z)-but-2-ene",[["C",1.37166,-0.24791,-0.8639],["C",0.65607,-0.69438,0.3696],["C",-0.53046,-0.27125,0.8332],["C",-1.43747,0.75387,0.23368],["H",0.8328,0.51492,-1.42917],["H",2.34964,0.16263,-0.59369],["H",1.53358,-1.1045,-1.52575],["H",1.17899,-1.45612,0.94735],["H",-0.89646,-0.71598,1.75827],["H",-1.59398,1.56901,0.94715],["H",-1.05429,1.18785,-0.69186],["H",-2.41006,0.30187,0.01513]],[[1,2,1],[2,3,2],[3,4,1],[1,5,1],[1,6,1],[1,7,1],[2,8,1],[3,9,1],[4,10,1],[4,11,1],[4,12,1]]),
+ ezdichloroE:()=>molecule("(E)-1,2-dicloroetene",[["Cl",2.10902,0.39232,0.0012],["C",0.56563,-0.34995,-0.00103],["C",-0.56563,0.34995,0.00103],["Cl",-2.10902,-0.39232,-0.00121],["H",0.62111,-1.43079,-0.00424],["H",-0.62111,1.43079,0.00424]],[[1,2,1],[2,3,2],[3,4,1],[2,5,1],[3,6,1]]),
+ ezdichloroZ:()=>molecule("(Z)-1,2-dicloroetene",[["Cl",-1.62151,1.28497,0.00093],["C",-0.67065,-0.13927,0.00641],["C",0.66028,-0.18228,-0.00344],["Cl",1.70093,1.1776,-0.02366],["H",-1.28532,-1.03009,0.01914],["H",1.21628,-1.11094,0.00062]],[[1,2,1],[2,3,2],[3,4,1],[2,5,1],[3,6,1]]),
+ ezacidE:()=>molecule("(E)-acido but-2-enoico",[["C",-2.05815,0.07675,-0.437],["C",-0.72314,-0.30301,0.11263],["C",0.43126,0.26085,-0.27366],["C",1.7059,-0.17027,0.31729],["O",1.8805,-1.02354,1.16514],["O",2.72016,0.52761,-0.21762],["H",-1.98557,0.8674,-1.19052],["H",-2.53191,-0.79401,-0.90036],["H",-2.70597,0.43257,0.3699],["H",-0.71673,-1.08616,0.86971],["H",0.4727,1.04227,-1.02252],["H",3.51095,0.16953,0.2365]],[[1,2,1],[2,3,2],[3,4,1],[4,5,2],[4,6,1],[1,7,1],[1,8,1],[1,9,1],[2,10,1],[3,11,1],[6,12,1]]),
+ ezacidZ:()=>molecule("(Z)-acido but-2-enoico",[["C",-1.37214,-0.83226,-0.27197],["C",-0.93477,0.5964,-0.28295],["C",0.26656,1.10386,0.0382],["C",1.49606,0.39715,0.42802],["O",2.44345,0.93134,0.97764],["O",1.53026,-0.89356,0.07445],["H",-0.7899,-1.45485,0.4109],["H",-2.41255,-0.88874,0.06602],["H",-1.32193,-1.25235,-1.28059],["H",-1.71194,1.30468,-0.56705],["H",0.39617,2.18306,0.02918],["H",2.41073,-1.19474,0.37815]],[[1,2,1],[2,3,2],[3,4,1],[4,5,2],[4,6,1],[1,7,1],[1,8,1],[1,9,1],[2,10,1],[3,11,1],[6,12,1]]),
+ brclfr:()=>molecule("Bromoclorofluorometano (R)", [["F",-0.0891,1.2879,0.5809],["C",-0.0591,0.1051,-0.0831],["Cl",-1.3038,-0.9705,0.5504],["Br",1.6876,-0.7115,0.0976],["H",-0.2356,0.2891,-1.1457]], [[1,2,1],[2,3,1],[2,4,1],[2,5,1]]),
+ brclfs:()=>molecule("Bromoclorofluorometano (S)", [["F",-0.1601,1.1545,-0.8034],["C",-0.0556,0.1182,0.0661],["Cl",-1.3157,-1.0701,-0.2622],["Br",1.6931,-0.6998,-0.086],["H",-0.1618,0.4972,1.0855]], [[1,2,1],[2,3,1],[2,4,1],[2,5,1]]),
+ butanolr:()=>molecule("(R)-butan-2-olo", [["C",-1.371,0.9148,0.0292],["C",-0.7139,-0.4581,0.0178],["O",-1.4344,-1.2706,-0.9088],["C",0.7579,-0.4225,-0.4028],["C",1.6485,0.3472,0.5586],["H",-2.4425,0.8222,0.2383],["H",-1.284,1.3989,-0.9498],["H",-0.9313,1.5704,0.7858],["H",-0.8153,-0.9169,1.0077],["H",-1.0443,-2.1609,-0.8834],["H",1.1299,-1.4517,-0.4845],["H",0.848,0.0018,-1.4106],["H",1.5583,-0.0447,1.5766],["H",2.696,0.258,0.2532],["H",1.398,1.4119,0.5728]], [[1,2,1],[2,3,1],[2,4,1],[4,5,1],[1,6,1],[1,7,1],[1,8,1],[2,9,1],[3,10,1],[4,11,1],[4,12,1],[5,13,1],[5,14,1],[5,15,1]]),
+ butanols:()=>molecule("(S)-butan-2-olo", [["C",-1.366,0.982,-0.076],["C",-0.7474,-0.371,-0.3961],["O",-1.0809,-1.2736,0.6544],["C",0.7723,-0.3153,-0.5863],["C",1.544,0.1319,0.6486],["H",-2.4574,0.8951,-0.0315],["H",-1.1094,1.7276,-0.8344],["H",-1.0492,1.348,0.9061],["H",-1.2045,-0.7548,-1.3155],["H",-0.6994,-2.1392,0.4293],["H",1.1288,-1.3173,-0.8554],["H",1.0153,0.349,-1.4237],["H",1.3313,-0.5117,1.5077],["H",2.6204,0.0853,0.4533],["H",1.302,1.1638,0.9194]], [[1,2,1],[2,3,1],[2,4,1],[4,5,1],[1,6,1],[1,7,1],[1,8,1],[2,9,1],[3,10,1],[4,11,1],[4,12,1],[5,13,1],[5,14,1],[5,15,1]]),
+ lactic_s:()=>molecule("(S)-acido lattico", [["C",-1.3873,-0.5477,0.4319],["C",-0.2772,0.4488,0.1501],["O",-0.5693,1.0994,-1.086],["C",1.0858,-0.245,0.1214],["O",1.4579,-1.1875,0.799],["O",1.9318,0.3471,-0.7563],["H",-1.2422,-1.0482,1.3943],["H",-1.4293,-1.3158,-0.3488],["H",-2.3617,-0.0478,0.4398],["H",-0.2439,1.2146,0.932],["H",0.2817,1.4663,-1.3974],["H",2.7536,-0.184,-0.6799]], [[1,2,1],[2,3,1],[2,4,1],[4,5,2],[4,6,1],[1,7,1],[1,8,1],[1,9,1],[2,10,1],[3,11,1],[6,12,1]]),
+ alanine_s:()=>molecule("(S)-alanina", [["N",0.18,1.4649,-0.6188],["C",-0.1994,0.4399,0.3766],["C",-1.3228,-0.4412,-0.1528],["C",1.0,-0.4376,0.7426],["O",1.1749,-1.0126,1.8057],["O",1.875,-0.61,-0.2756],["H",-0.6538,1.8279,-1.0761],["H",0.7339,1.0032,-1.3451],["H",-0.5208,0.9603,1.285],["H",-1.0231,-0.969,-1.0656],["H",-1.6002,-1.2008,0.5865],["H",-2.2166,0.1504,-0.3781],["H",2.5729,-1.1753,0.1158]], [[1,2,1],[2,3,1],[2,4,1],[4,5,2],[4,6,1],[1,7,1],[1,8,1],[2,9,1],[3,10,1],[3,11,1],[3,12,1],[6,13,1]]),
+ ditartaric:()=>molecule("(2R,3R)-acido tartarico", [["O",1.3258,1.5044,0.4309],["C",1.3125,0.6469,-0.4353],["O",1.9152,0.8692,-1.6298],["C",0.7183,-0.7615,-0.3588],["O",0.426,-1.274,-1.6678],["C",-0.5411,-0.8212,0.508],["O",-0.1698,-1.0054,1.8825],["C",-1.4319,0.4111,0.3352],["O",-1.6168,1.0681,-0.6748],["O",-2.091,0.7141,1.4813],["H",2.233,1.7959,-1.5606],["H",1.4993,-1.4053,0.0625],["H",1.1081,-0.8913,-2.2567],["H",-1.1521,-1.6879,0.2298],["H",-0.9321,-0.6819,2.4047],["H",-2.6036,1.5186,1.249]], [[1,2,2],[2,3,1],[2,4,1],[4,5,1],[4,6,1],[6,7,1],[6,8,1],[8,9,2],[8,10,1],[3,11,1],[4,12,1],[5,13,1],[6,14,1],[7,15,1],[10,16,1]]),
+ water:()=>molecule('Acqua (H₂O)',[['O',0,0,0],['H',-.757,.586,0],['H',.757,.586,0]],[[1,2],[1,3]]),
+ ethane:()=>molecule('Etano (C₂H₆) — geometria MMFF94 di riferimento',[['C',0.7445,-0.1272,0.0342],['C',-0.7445,0.1272,-0.0342],['H',1.2514,0.3243,-0.8238],['H',1.166,0.3017,0.9482],['H',0.9515,-1.2015,0.0305],['H',-1.166,-0.3017,-0.9482],['H',-1.2514,-0.3243,0.8238],['H',-0.9515,1.2015,-0.0305]],[[1,2],[1,3],[1,4],[1,5],[2,6],[2,7],[2,8]]),
+ butane:()=>molecule('Butano (C₄H₁₀) — conformero MMFF94 di riferimento',[['C',1.3714,0.6264,-0.6246],['C',0.8012,-0.6208,0.033],['C',-0.4505,-0.3503,0.8682],['C',-1.6397,0.1166,0.043],['H',1.576,1.4038,0.1182],['H',0.6859,1.0341,-1.3733],['H',2.3116,0.3869,-1.1319],['H',0.5818,-1.3704,-0.7362],['H',1.5688,-1.0525,0.6864],['H',-0.7284,-1.2749,1.3882],['H',-0.2293,0.3941,1.6419],['H',-1.8678,-0.5959,-0.7559],['H',-2.526,0.207,0.6793],['H',-1.455,1.0959,-0.4082]],[[1,2],[2,3],[3,4],[1,5],[1,6],[1,7],[2,8],[2,9],[3,10],[3,11],[4,12],[4,13],[4,14]]),
+  methane:()=>{const p=.629;return molecule('Metano (CH₄)',[['C',0,0,0],['H',p,p,p],['H',-p,-p,p],['H',-p,p,-p],['H',p,-p,-p]],[[1,2],[1,3],[1,4],[1,5]]);},
+ ammonia:()=>molecule('Ammoniaca (NH₃)',[['N',0,0,.32],['H',.946,0,0],['H',-.473,.819,0],['H',-.473,-.819,0]],[[1,2],[1,3],[1,4]]),
+ co2:()=>molecule('Diossido di carbonio (CO₂)',[['O',-1.16,0,0],['C',0,0,0],['O',1.16,0,0]],[[1,2,2],[2,3,2]]),
+ ethene:()=>molecule('Etene (C₂H₄)',[['C',-.67,0,0],['C',.67,0,0],['H',-1.23,.93,0],['H',-1.23,-.93,0],['H',1.23,.93,0],['H',1.23,-.93,0]],[[1,2,2],[1,3],[1,4],[2,5],[2,6]]),
+ ethyne:()=>molecule('Etino (C₂H₂)',[['C',-.60,0,0],['C',.60,0,0],['H',-1.66,0,0],['H',1.66,0,0]],[[1,2,3],[1,3],[2,4]]),
+ formaldehyde:()=>molecule('Metanale (CH₂O)',[['C',0,0,0],['O',1.22,0,0],['H',-.57,.92,0],['H',-.57,-.92,0]],[[1,2,2],[1,3],[1,4]]),
+ benzene:()=>{const a=[],b=[];for(let i=0;i<6;i++){const th=Math.PI*i/3;a.push(['C',1.39*Math.cos(th),1.39*Math.sin(th),0]);}for(let i=0;i<6;i++){const th=Math.PI*i/3;a.push(['H',2.48*Math.cos(th),2.48*Math.sin(th),0]);b.push([i+1,(i+1)%6+1,i%2===0?2:1],[i+1,i+7,1]);}return molecule('Benzene (C₆H₆) — una struttura di Kekulé',a,b);},
+ bf3:()=>{const a=[['B',0,0,0]],b=[];for(let i=0;i<3;i++){const th=i*2*Math.PI/3;a.push(['F',1.3*Math.cos(th),1.3*Math.sin(th),0]);b.push([1,i+2]);}return molecule('Trifluoruro di boro (BF₃)',a,b);},
+ sf6:()=>{const a=[['S',0,0,0],['F',1.56,0,0],['F',-1.56,0,0],['F',0,1.56,0],['F',0,-1.56,0],['F',0,0,1.56],['F',0,0,-1.56]];return molecule('Esafluoruro di zolfo (SF₆)',a,[[1,2],[1,3],[1,4],[1,5],[1,6],[1,7]]);},
+ pcl5:()=>{const a=[['P',0,0,0]],b=[];for(let i=0;i<3;i++){const t=i*2*Math.PI/3;a.push(['Cl',2.02*Math.cos(t),2.02*Math.sin(t),0]);b.push([1,i+2]);}a.push(['Cl',0,0,2.14],['Cl',0,0,-2.14]);b.push([1,5],[1,6]);return molecule('Pentacloruro di fosforo (PCl₅) — geometria ideale',a,b);},
+ hcn:()=>molecule('Acido cianidrico (HCN)',[['H',-2.22,0,0],['C',-1.16,0,0],['N',0,0,0]],[[1,2],[2,3,3]]),
+ ammonium:()=>{const d=PRESETS.methane();d.name='Ione ammonio (NH₄⁺)';d.atoms[0].symbol='N';d.atoms[0].charge=1;return d;},
+ carbonate:()=>{const a=[['C',0,0,0]];const b=[];for(let i=0;i<3;i++){const t=i*2*Math.PI/3;a.push(['O',1.29*Math.cos(t),1.29*Math.sin(t),0]);b.push([1,i+2,i===0?2:1]);}const d=molecule('Carbonato (CO₃²⁻) — una forma limite di risonanza',a,b);d.atoms[2].charge=-1;d.atoms[3].charge=-1;return d;},
+};
+
+/**
+ * MolecolaLab v0.4 — educational Cahn–Ingold–Prelog (CIP) support.
+ * Supported: noncyclic structures; 3D tetrahedral centers C, Si, N+ with four
+ * explicit single-bonded ligands, standard atomic numbers, elementary duplicate
+ * node expansions for multiple bonds in the substituents. All unsupported
+ * features are reported explicitly, not assigned an R/S descriptor.
+ *
+ * NOT a complete implementation of IUPAC CIP sequence rules (2013/2021).
+ * Not supported: isotopes, cyclic ligands, pseudoasymmetric centers, E/Z-driven
+ * ranking, descriptor-dependent stereogenic units, implicit H, or resonance.
+ * 
+ * This module does not import or distribute RDKit/Avogadro/Qt.
+ */
+const cipZ = a => element(a.symbol)?.Z ?? 0;
+const cipPoint = a => [a.x,a.y,a.z];
+const cipMinus = (a,b) => a.map((v,i)=>v-b[i]);
+const cipCross=(a,b)=>[a[1]*b[2]-a[2]*b[1],a[2]*b[0]-a[0]*b[2],a[0]*b[1]-a[1]*b[0]];
+const cipDot=(a,b)=>a.reduce((t,v,i)=>t+v*b[i],0);
+const cipNorm=a=>Math.hypot(...a);
+const cipNeighbors=(graph,id)=>graph.get(id)||[];
+function cipGraph(doc){
+ const graph=new Map(doc.atoms.map(a=>[a.id,[]]));
+ for(const b of doc.bonds){
+  if(!graph.has(b.a)||!graph.has(b.b)||!Number.isInteger(b.order)||b.order<1||b.order>3)return null;
+  graph.get(b.a).push({id:b.b,order:b.order});
+  graph.get(b.b).push({id:b.a,order:b.order});
+ }
+ return graph;
+}
+function cipHasCycle(graph,from){
+ const seen=new Set(),stack=[[from,null]];
+ while(stack.length){const [id,parent]=stack.pop();if(seen.has(id))return true;seen.add(id);
+  for(const other of cipNeighbors(graph,id)){if(other.id===parent)continue;
+   if(seen.has(other.id))return true;stack.push([other.id,id]);
+  }
+ }
+ return false;
+}
+/** Atomic-number levels from one ligand, with duplicate terminal nodes for C=C/C=O/C≡N.
+ * Valid on acyclic explicit molecular graphs only.
+ */
+function cipLayers(doc,graph,centerId,ligandId){
+ const atoms=new Map(doc.atoms.map(a=>[a.id,a]));
+ let frontier=[{id:ligandId,parent:centerId,ghost:false}];
+ const levels=[];
+ for(let depth=0;depth<=doc.atoms.length+1&&frontier.length;depth++){
+  const labels=frontier.map(p=>cipZ(atoms.get(p.id))).sort((a,b)=>b-a);
+  levels.push(labels);
+  const next=[];
+  for(const node of frontier){
+   if(node.ghost)continue;
+   const edges=cipNeighbors(graph,node.id);
+   // The back-duplicate of the parent on a multiple bond is terminal in CIP's digraph.
+   const back=edges.find(e=>e.id===node.parent);
+   if(back && back.order>1)for(let j=1;j<back.order;j++)next.push({id:node.parent,parent:node.id,ghost:true});
+   for(const e of edges){
+    if(e.id===node.parent)continue;
+    next.push({id:e.id,parent:node.id,ghost:false});
+    for(let j=1;j<e.order;j++)next.push({id:e.id,parent:node.id,ghost:true});
+   }
+  }
+  frontier=next;
+  if(frontier.length>100000)throw Error('Confronto CIP troppo esteso');
+ }
+ return levels;
+}
+function cipCompareLayers(one,two){
+ for(let depth=0;depth<Math.max(one.length,two.length);depth++){
+  const a=one[depth]||[],b=two[depth]||[];
+  for(let i=0;i<Math.max(a.length,b.length);i++){
+   const diff=(a[i]||0)-(b[i]||0);
+   if(diff!==0)return {order:Math.sign(diff),depth};
+  }
+ }
+ return {order:0,depth:null};
+}
+/** Identify chemically identical ligand trees in the supported acyclic subset.
+ * A CIP-level tie that is not a trivial structural duplication is unresolved.
+ */
+function cipBranchSignature(doc,graph,node,parent){
+ const a=findAtom(doc,node),parts=[];
+ for(const b of cipNeighbors(graph,node))if(b.id!==parent)
+  parts.push(`${b.order}:${cipBranchSignature(doc,graph,b.id,node)}`);
+ return `${a.symbol}:${Number(a.charge||0)}(${parts.sort().join('|')})`;
+}
+/** Main educational API. `assigned` is never emitted for an unsupported graph. */
+function analyzeCIP(doc,id){
+ const central=findAtom(doc,id);
+ if(!central)return {status:'unavailable',reason:'Atomo non trovato.'};
+ const graph=cipGraph(doc);
+ if(!graph)return {status:'unsupported',reason:'Connettività non valida.'};
+ const adjacent=cipNeighbors(graph,id);
+ if(adjacent.length!==4||adjacent.some(e=>e.order!==1))
+  return {status:'not_tetrahedral',reason:'Occorrono quattro sostituenti espliciti, uniti mediante quattro legami singoli.'};
+ if(!['C','Si'].includes(central.symbol)&&!(central.symbol==='N'&&Number(central.charge||0)===1))
+  return {status:'unsupported',reason:'Assegnazione v0.4 limitata a C, Si e N⁺ tetraedrici con quattro sostituenti.'};
+ if(['C','Si'].includes(central.symbol)&&Number(central.charge||0)!==0)
+  return {status:'unsupported',reason:'Centro C/Si formalmente carico: non supportato in questa versione.'};
+ if(doc.atoms.some(a=>a.isotope!=null||a.massNumber!=null||a.mass!=null))
+  return {status:'unsupported',reason:'Priorità isotopiche non implementate.'};
+ if(doc.atoms.length>250)
+  return {status:'unsupported',reason:'Analisi CIP limitata a 250 atomi.'};
+ if(cipHasCycle(graph,id))
+  return {status:'unsupported',reason:'La molecola contiene un anello: il confronto CIP dei percorsi ciclici non è ancora implementato.'};
+ const entries=adjacent.map(({id:neighbor})=>{
+  const layers=cipLayers(doc,graph,id,neighbor);
+  const atom=findAtom(doc,neighbor);
+  return {id:neighbor,symbol:atom.symbol,layers};
+ });
+ entries.sort((a,b)=>cipCompareLayers(b.layers,a.layers).order || a.id-b.id);
+ const ties=[];
+ for(let i=0;i<3;i++)if(cipCompareLayers(entries[i].layers,entries[i+1].layers).order===0)ties.push([entries[i].id,entries[i+1].id]);
+ if(ties.length){
+  const equivalent=ties.every(([a,b])=>cipBranchSignature(doc,graph,a,id)===cipBranchSignature(doc,graph,b,id));
+  // Do not declare true equivalence in the presence of stereogenic units elsewhere:
+  // enantiomorphic ligands can require descriptor-dependent CIP sequence rules.
+  const otherPotential=ties.some(([left,right])=>[left,right].some(first=>{
+   const stack=[[first,id]];
+   while(stack.length){const [node,parent]=stack.pop();const current=findAtom(doc,node);
+    if(cipNeighbors(graph,node).length===4 &&
+     (['C','Si'].includes(current.symbol)||(current.symbol==='N'&&current.charge===1)) &&
+     new Set(cipNeighbors(graph,node).map(e=>findAtom(doc,e.id).symbol)).size>1)return true;
+    for(const e of cipNeighbors(graph,node))if(e.id!==parent)stack.push([e.id,node]);
+   }
+   return false;
+  }));
+  return equivalent&&!otherPotential
+   ? {status:'not_stereogenic',reason:'Sostituenti equivalenti: nessun centro stereogenico R/S (nel modello supportato).'}
+   : {status:'unresolved',reason:'Priorità indistinguibili con le regole attualmente disponibili (possibili condizioni stereochimiche complesse): nessuna assegnazione R/S.',ties};
+ }
+ const points=entries.map(e=>cipPoint(findAtom(doc,e.id)));
+ if(points.some(p=>p.some(v=>!Number.isFinite(v))))return {status:'unsupported',reason:'Coordinate non valide.'};
+ const a=cipMinus(points[0],points[3]),b=cipMinus(points[1],points[3]),c=cipMinus(points[2],points[3]);
+ const denom=cipNorm(a)*cipNorm(b)*cipNorm(c);
+ const orientation=cipDot(a,cipCross(b,c));
+ if(!Number.isFinite(orientation)||denom<1e-10||Math.abs(orientation/denom)<0.06)
+  return {status:'degenerate',reason:'Geometria tridimensionale planare o quasi degenerata: impossibile assegnare R/S in modo attendibile.',priorities:entries.map((v,i)=>({rank:i+1,atomId:v.id,symbol:v.symbol}))};
+ return {status:'assigned',descriptor:orientation<0?'R':'S',centerId:id,symbol:central.symbol,
+  priorities:entries.map((v,i)=>({rank:i+1,atomId:v.id,symbol:v.symbol})),
+  geometryScore:Math.abs(orientation/denom),
+  note:'Assegnazione CIP didattica basata sul grafo aciclico e sulle coordinate 3D; tutti e quattro i sostituenti devono essere espliciti. Non sono gestiti isotopi, anelli e regole CIP avanzate.'};
+}
+/** Only atoms which meet the local connectivity requirement are listed, including unresolved cases. */
+function summarizeCIP(doc){
+ const g=cipGraph(doc);
+ if(!g)return [];
+ return doc.atoms.filter(a=>cipNeighbors(g,a.id).length===4&&cipNeighbors(g,a.id).every(e=>e.order===1)&&(['C','Si'].includes(a.symbol)||(a.symbol==='N'&&a.charge===1)))
+  .map(a=>({id:a.id,symbol:a.symbol,...analyzeCIP(doc,a.id)}))
+  .filter(a=>a.status!=='not_stereogenic');
+}
+/** Spatial inversion. Mirrors all atomic coordinates, not just one stereocenter. */
+function mirrorMolecule(doc){
+ if(!doc.atoms.length)throw Error('Non ci sono atomi da riflettere.');
+ const x0=doc.atoms.reduce((s,a)=>s+a.x,0)/doc.atoms.length;
+ for(const a of doc.atoms)a.x=2*x0-a.x;
+ doc.name='Speculare di '+(doc.name||'molecola').replace(/^Speculare di /,'');
+}
+
+/**
+ * MolecolaLab v0.5 — E/Z for explicitly modelled acyclic C=C double bonds.
+ * Uses the same atomic-number first CIP ligand comparison as R/S. This is NOT
+ * the full 2013/2021 CIP rule set: isotope, ring, cumulene, implicit H,
+ * stereodescriptor-dependent tie-breaks and exotic bonding are unresolved.
+ * Geometry is determined from 3D coordinates, NOT from screen projection.
+ */
+const ezSubtract=(a,b)=>[a[0]-b[0],a[1]-b[1],a[2]-b[2]];
+const ezUnit=v=>{const n=cipNorm(v);return n>1e-9?v.map(x=>x/n):null;};
+const ezPerpendicular=(point,origin,axis)=>{
+ const p=ezSubtract(cipPoint(point),cipPoint(origin));
+ const axial=cipDot(p,axis);
+ return ezUnit(p.map((x,i)=>x-axial*axis[i]));
+};
+const ezCharge=a=>Number(a.charge||0);
+
+/** Assign E or Z, or explicitly report why assignment is not justified. */
+function analyzeEZ(doc,bondId){
+ const bond=doc.bonds.find(b=>b.id===bondId);
+ if(!bond)return {status:'unavailable',reason:'Legame non trovato.'};
+ if(bond.order!==2)return {status:'not_double',reason:'Seleziona un doppio legame C=C.'};
+ const first=findAtom(doc,bond.a),second=findAtom(doc,bond.b);
+ if(!first||!second)return {status:'unsupported',reason:'Estremi del doppio legame mancanti.'};
+ if(first.symbol!=='C'||second.symbol!=='C')return {status:'unsupported',reason:'La versione 0.5 assegna E/Z ai doppi legami carbonio–carbonio (C=C) soltanto.'};
+ if(doc.atoms.length>250)return {status:'unsupported',reason:'Analisi E/Z limitata a 250 atomi.'};
+ if(doc.atoms.some(a=>a.isotope!=null||a.massNumber!=null||a.mass!=null))
+  return {status:'unsupported',reason:'Priorità di isotopi non supportate.'};
+ const graph=cipGraph(doc);
+ if(!graph)return {status:'unsupported',reason:'Connettività non valida.'};
+ if(cipHasCycle(graph,bond.a))return {status:'unsupported',reason:'Molecola con anelli: confronto CIP ciclico non supportato.'};
+ if(doc.atoms.some(a=>ezCharge(a)!==0))
+  return {status:'unsupported',reason:'La procedura E/Z didattica non gestisce cariche formali.'};
+ const ends=[first,second];
+ const priorityEnds=[];
+ for(const end of ends){
+  const neighbors=cipNeighbors(graph,end.id),side=neighbors.filter(e=>e.id!==(end.id===first.id?second.id:first.id));
+  if(neighbors.length!==3||side.length!==2||neighbors.reduce((s,e)=>s+e.order,0)!==4||side.some(e=>e.order!==1))
+   return {status:'unsupported',reason:'Servono due sostituenti espliciti con legami singoli su ciascun carbonio sp² (anche gli H vanno disegnati).'};
+  const ligands=side.map(e=>{
+   const at=findAtom(doc,e.id);
+   return {id:e.id,symbol:at.symbol,layers:cipLayers(doc,graph,end.id,e.id)};
+  });
+  ligands.sort((a,b)=>cipCompareLayers(b.layers,a.layers).order||a.id-b.id);
+  const comparison=cipCompareLayers(ligands[0].layers,ligands[1].layers).order;
+  if(comparison===0){
+   const identical=cipBranchSignature(doc,graph,ligands[0].id,end.id)===cipBranchSignature(doc,graph,ligands[1].id,end.id);
+   return identical
+    ? {status:'not_stereogenic',reason:`I due sostituenti del carbonio ${end.id} sono uguali: E/Z non definito.`}
+    : {status:'unresolved',reason:`Non riesco a distinguere con certezza le priorità CIP sul carbonio ${end.id}. Non assegno E/Z.`};
+  }
+  priorityEnds.push({endId:end.id,ranked:ligands.map((a,i)=>({rank:i+1,atomId:a.id,symbol:a.symbol}))});
+ }
+ const axis=ezUnit(ezSubtract(cipPoint(second),cipPoint(first)));
+ if(!axis)return {status:'degenerate',reason:'I due carboni del doppio legame coincidono nelle coordinate.'};
+ const oriented=priorityEnds.map((entry,i)=>{
+  const base=ends[i];
+  return entry.ranked.map(s=>ezPerpendicular(findAtom(doc,s.atomId),base,axis));
+ });
+ if(oriented.some(pair=>pair.some(v=>!v)))
+  return {status:'degenerate',reason:'Uno o più sostituenti sono allineati al doppio legame: geometria non affidabile.',ends:priorityEnds};
+ if(oriented.some(pair=>cipDot(pair[0],pair[1])>-0.45))
+  return {status:'degenerate',reason:'Geometria locale non compatibile con i due sostituenti sp² su lati opposti: correggi le coordinate.',ends:priorityEnds};
+ const dot=cipDot(oriented[0][0],oriented[1][0]);
+ if(!Number.isFinite(dot)||Math.abs(dot)<0.85)
+  return {status:'degenerate',reason:'Doppio legame molto deformato o sostituenti fuori piano: nessuna assegnazione E/Z attendibile.',ends:priorityEnds};
+ return {status:'assigned',descriptor:dot>0?'Z':'E',bondId:bond.id,firstId:first.id,secondId:second.id,
+  ends:priorityEnds,geometryScore:Math.abs(dot),
+  note:'I sostituenti di priorità CIP 1 si trovano dallo stesso lato (Z) oppure su lati opposti (E) del legame C=C. Calcolo limitato a grafi aciclici con tutti gli H espliciti e geometria sp² attendibile.'};
+}
+
+/** All C=C bonds for the E/Z panel, including ties and unresolved geometry. */
+function summarizeEZ(doc){
+ return doc.bonds.filter(b=>b.order===2&&findAtom(doc,b.a)?.symbol==='C'&&findAtom(doc,b.b)?.symbol==='C')
+  .map(b=>({bondId:b.id,firstId:b.a,secondId:b.b,...analyzeEZ(doc,b.id)}));
+}
+
+/**
+ * Construct the OPPOSITE geometric isomer by rotating the COMPLETE component
+ * on one side of a formally disconnected alkene bond by 180° around the C=C axis.
+ * This is a rebuild of a different isomer, NOT a physically allowed internal
+ * torsional rotation around the double bond. Atomic positions and connections
+ * on each side are preserved rigidly.
+ */
+function invertEZ(doc,bondId){
+ const before=analyzeEZ(doc,bondId);
+ if(before.status!=='assigned')throw Error('E/Z non assegnabile: '+before.reason);
+ const bond=doc.bonds.find(b=>b.id===bondId),base=findAtom(doc,bond.a),pivot=findAtom(doc,bond.b);
+ const axis=ezUnit(ezSubtract(cipPoint(pivot),cipPoint(base)));
+ if(!axis)throw Error('Asse C=C degenerato.');
+ const graph=cipGraph(doc),seen=new Set([pivot.id]),stack=[pivot.id];
+ while(stack.length){const now=stack.pop();for(const entry of cipNeighbors(graph,now)){
+   // The C=C is disconnected for this traversal.
+   if((now===pivot.id&&entry.id===base.id)||(now===base.id&&entry.id===pivot.id))continue;
+   if(!seen.has(entry.id)){seen.add(entry.id);stack.push(entry.id);}
+ }}
+ if(seen.has(base.id))throw Error('Doppio legame all’interno di un anello: impossibile generare l’isomero opposto.');
+ const coords=new Map();
+ for(const id of seen){const atom=findAtom(doc,id),diff=ezSubtract(cipPoint(atom),cipPoint(pivot));
+  const proj=cipDot(diff,axis),rot=diff.map((v,i)=>2*proj*axis[i]-v);
+  coords.set(id,rot.map((v,i)=>v+cipPoint(pivot)[i]));
+ }
+ const original=new Map([...seen].map(id=>{const a=findAtom(doc,id);return [id,[a.x,a.y,a.z]];}));
+ for(const [id,xyz] of coords){const a=findAtom(doc,id);[a.x,a.y,a.z]=xyz;}
+ const after=analyzeEZ(doc,bondId);
+ if(after.status!=='assigned'||after.descriptor===before.descriptor){
+  for(const [id,xyz] of original){const a=findAtom(doc,id);[a.x,a.y,a.z]=xyz;}
+  throw Error('Impossibile costruire con affidabilità l’altro isomero geometrico.');
+ }
+ if(/^\([EZ]\)-/.test(doc.name||''))doc.name=`(${after.descriptor})-${doc.name.slice(4)}`;
+ else doc.name=`Isomero ${after.descriptor} di ${doc.name||'molecola'}`.slice(0,80);
+ return {before:before.descriptor,after:after.descriptor,bondId,rotatedAtoms:seen.size-1};
+}
+
+const $=id=>document.getElementById(id);
+const canvas=$('canvas'),ctx=canvas.getContext('2d',{alpha:true});
+let doc=blank(), selected=null, selectedBond=null, pendingBond=null,measurement=[], tool='view',dirty=false;
+let undo=[], redo=[], yaw=0.42, pitch=-0.17, zoom=1.0, mode='ballstick';
+let pointerStart=null, dragging=false, dims={w:100,h:100},projected=[],stereoLabels=[],ezLabels=[];
+const MAX_HISTORY=80;
+const toolHelp={move:'Trascina un atomo per spostarlo nel piano dello schermo senza ricalcolare il resto della molecola. Per la profondità z usa le coordinate numeriche.',view:'Trascina la molecola per ruotarla, usa la rotellina per lo zoom. Clicca un atomo per selezionarlo.',atom:'Seleziona un elemento. Clicca sullo sfondo per aggiungerlo; prima clicca un atomo per creare un legame.',bond:'Clicca due atomi per inserire o modificare un legame dell’ordine scelto.',select:'Clicca un atomo per ispezionarlo; usa il pannello di destra per cambiare la carica formale.',measure:'Clicca 2, 3 o 4 atomi secondo la grandezza selezionata nel pannello destro.',delete:'Clicca un atomo o un legame per eliminarlo.'};
+function toast(msg){const t=$('toast');t.textContent=msg;t.classList.add('show');clearTimeout(toast.timer);toast.timer=setTimeout(()=>t.classList.remove('show'),3700);}
+function remember(before){if(JSON.stringify(before)===JSON.stringify(doc))return false;undo.push(before);if(undo.length>MAX_HISTORY)undo.shift();redo=[];dirty=true;return true;}
+function changed(){render();refreshPanel();}
+function applyMutator(fn){const before=clone(doc);try{fn();if(remember(before))changed();}catch(e){doc=before;changed();toast('Operazione non riuscita: '+e.message);}}
+function clearSelection(){selected=null;selectedBond=null;pendingBond=null;measurement=[];changed();}
+function replaceDoc(molecule){if(dirty&&doc.atoms.length&&!confirm('Sostituire la molecola? Le modifiche non esportate andranno perse.'))return false;doc=molecule;dirty=true;undo=[];redo=[];selected=null;selectedBond=null;pendingBond=null;measurement=[];resetCamera(false);changed();return true;}
+function setTool(value){tool=value;pendingBond=null;measurement=[];
+ document.querySelectorAll('[data-tool]').forEach(b=>{const active=b.dataset.tool===value;b.classList.toggle('active',active);b.setAttribute('aria-pressed',String(active));});
+ canvas.classList.toggle('tool-mode',value!=='view');canvas.classList.toggle('move-mode',value==='move');$('toolHint').textContent=toolHelp[value];$('viewerMessage').textContent=toolHelp[value];changed();}
+function initElements(){
+ const s=$('elemSelect'),sel=$('selectedElement');for(const e of ELEMENTS){for(const target of [s,sel]){const opt=document.createElement('option');opt.value=e.symbol;opt.textContent=`${e.Z.toString().padStart(3,' ')} · ${e.symbol}`;target.appendChild(opt);}}s.value='C';
+ for(const name of ['C','H','O','N','S','P','Cl','F','Br']){const b=document.createElement('button');b.textContent=name;b.dataset.symbol=name;b.addEventListener('click',()=>{s.value=name;refreshQuick();if(tool!=='atom')setTool('atom');});$('quickElements').appendChild(b);}
+ s.addEventListener('change',refreshQuick);refreshQuick();
+}
+function refreshQuick(){document.querySelectorAll('[data-symbol]').forEach(b=>b.classList.toggle('active',b.dataset.symbol===$('elemSelect').value));}
+function refreshPanel(){
+ $('moleculeName').textContent=doc.name||'Nuova molecola';$('renameInput').value=doc.name||'';
+ $('formula').textContent=formula(doc);
+ const charge=netCharge(doc);$('chargeLabel').textContent=`Carica formale netta: ${charge>0?'+':''}${charge}`;
+ $('counts').textContent=`${doc.atoms.length} atomi · ${doc.bonds.length} legami`;
+ $('atomListCount').textContent=`(${doc.atoms.length})`;$('emptyState').hidden=doc.atoms.length>0;
+ $('undoBtn').disabled=!undo.length;$('redoBtn').disabled=!redo.length;
+ const a=selected===null?null:findAtom(doc,selected);
+ const b=selectedBond===null?null:doc.bonds.find(t=>t.id===selectedBond);
+ $('selectedTitle').textContent=a?`Atomo ${a.id} · ${a.symbol}`:b?`Legame ${b.id}`:'Nessuna selezione';
+ $('atomControls').hidden=!a;$('bondControls').hidden=!b;
+ const info=$('selectedInfo');info.replaceChildren();
+ if(a){
+  const n=doc.bonds.filter(t=>t.a===a.id||t.b===a.id).length;
+  const entries=[['Numero atomico',element(a.symbol).Z],['Atomi direttamente legati',n],['Posizione x',a.x.toFixed(3)+' Å'],['Posizione y',a.y.toFixed(3)+' Å'],['Posizione z',a.z.toFixed(3)+' Å']];
+  const dl=document.createElement('dl');for(const [k,v] of entries){const dt=document.createElement('dt'),dd=document.createElement('dd');dt.textContent=k;dd.textContent=String(v);dl.append(dt,dd);}info.append(dl);
+ }else if(b){
+  const a1=findAtom(doc,b.a),a2=findAtom(doc,b.b);
+  info.textContent=`${a1?.symbol||'?'}${b.a} — ${a2?.symbol||'?'}${b.b}: ${dist(a1,a2).toFixed(3)} Å`;
+ }else info.textContent='Clicca un atomo o un legame nella vista 3D per modificarlo.';
+ $('atomCharge').disabled=!a;$('atomCharge').value=String(a?.charge||0);
+ $('selectedElement').disabled=!a;$('selectedElement').value=a?.symbol||'C';
+ for(const axis of ['x','y','z']){const input=$('atom'+axis.toUpperCase());input.disabled=!a;input.value=a?Number(a[axis].toFixed(4)):'';}
+ $('removeSelected').disabled=!a;
+ $('selectedBondOrder').disabled=!b;$('selectedBondOrder').value=String(b?.order||1);
+ $('selectedBondLength').disabled=!b;$('selectedBondLength').value=b?dist(findAtom(doc,b.a),findAtom(doc,b.b)).toFixed(3):'';
+ $('applyBondLength').disabled=!b;$('removeSelectedBond').disabled=!b;
+ const vsepr=$('vseprInfo');vsepr.replaceChildren();
+ if(!a){vsepr.textContent='Seleziona un atomo centrale (almeno due vicini) per una stima Lewis/VSEPR.';}
+ else {
+  const prediction=estimateVSEPR(doc,a.id);
+  if(!prediction?.supported){vsepr.textContent=prediction?.reason||'Previsione non disponibile.';}
+  else {
+   const value=document.createElement('strong');value.className='vsepr-value';value.textContent=`${prediction.formula} · ${prediction.molecularGeometry}`;
+   const details=document.createElement('span');details.className='vsepr-detail';details.textContent=`Geometria elettronica: ${prediction.electronicGeometry}; ${prediction.electronDomains} domini, ${prediction.lonePairs} coppie solitarie stimate.`;
+   const caveat=document.createElement('span');caveat.className='vsepr-detail';caveat.textContent=prediction.note;
+   vsepr.append(value,details,caveat);
+  }
+ }
+ refreshStereo(a);
+ refreshEZ(b);
+ const list=$('atomList');list.replaceChildren();if(!doc.atoms.length)list.textContent='Nessun atomo';
+ for(const at of doc.atoms){
+  const btn=document.createElement('button'),left=document.createElement('span'),right=document.createElement('span'),dot=document.createElement('span');
+  dot.className='element-dot';dot.style.background=element(at.symbol).color;
+  left.append(dot,document.createTextNode(`${at.id} · ${at.symbol}${at.charge?(at.charge>0?'+':'')+at.charge:''}`));
+  right.textContent=`${at.x.toFixed(2)}, ${at.y.toFixed(2)}, ${at.z.toFixed(2)}`;
+  btn.classList.toggle('active',at.id===selected);btn.append(left,right);btn.addEventListener('click',()=>{selected=at.id;selectedBond=null;changed();});list.append(btn);
+ }
+ $('measurementResult').replaceChildren();const n=Number($('measurementType').value);
+ if(measurement.length>=n){const at=measurement.map(id=>findAtom(doc,id));if(at.every(Boolean)){
+  if(n===4){['A','B','C','D'].forEach((letter,index)=>{$('torsion'+letter).value=String(measurement[index]);});
+    const measured=dihedral(...at);if(Number.isFinite(measured))$('targetDihedral').value=measured.toFixed(2);
+  }
+  const v=n===2?dist(...at):n===3?angle(...at):dihedral(...at),unit=n===2?'Å':'°';
+  const strong=document.createElement('strong');strong.textContent=Number.isFinite(v)?v.toFixed(n===2?3:2)+' '+unit:'Misura non definita';
+  const desc=document.createElement('small');desc.textContent=`Atomi: ${measurement.join(' → ')}`;$('measurementResult').append(strong,desc);
+ }}else $('measurementResult').textContent=`${measurement.length}/${n} atomi scelti. ${n===2?'Distanza':n===3?'Angolo di legame':'Angolo diedro'}.`;
+}
+
+/** R/S from topology and 3D coordinates, never from the view rotation. */
+function refreshStereo(selectedAtom){
+ const summary=$('stereoSummary'),inspector=$('stereoInfo');
+ summary.replaceChildren();inspector.replaceChildren();
+ if(!stereoLabels.length){summary.textContent='Nessun centro R/S assegnabile individuato.';}
+ else{
+  const assigned=stereoLabels.filter(x=>x.status==='assigned');
+  const unresolved=stereoLabels.length-assigned.length;
+  const header=document.createElement('small');header.className='muted';
+  header.textContent=`${assigned.length} centri assegnati${unresolved?' · '+unresolved+' da verificare':''}`;summary.append(header);
+  const box=document.createElement('div');box.className='stereo-badges';
+  for(const x of stereoLabels){
+   const b=document.createElement('button');b.type='button';b.className='stereo-chip '+(x.status==='assigned'?'assigned':'unresolved');
+   b.textContent=x.status==='assigned'?`${x.symbol}${x.id}: ${x.descriptor}`:`${x.symbol}${x.id}: ?`;
+   b.title=x.status==='assigned'?'Mostra le priorità CIP':x.reason;
+   b.addEventListener('click',()=>{selected=x.id;selectedBond=null;changed();});box.append(b);
+  }
+  summary.append(box);
+ }
+ if(!selectedAtom){inspector.textContent='Seleziona un atomo C/Si/N⁺ tetraedrico. Clicca un centro R/S per leggere le priorità.';return;}
+ const result=analyzeCIP(doc,selectedAtom.id);
+ if(result.status==='assigned'){
+  const heading=document.createElement('strong');heading.className='stereo-descriptor';heading.textContent=`${selectedAtom.symbol}${selectedAtom.id} · ${result.descriptor}`;
+  inspector.append(heading);
+  const title=document.createElement('div');title.className='stereo-priorities-title';title.textContent='Priorità CIP (1 = più alta)';inspector.append(title);
+  const list=document.createElement('ol');list.className='stereo-priorities';
+  for(const entry of result.priorities){const item=document.createElement('li');item.textContent=`${entry.symbol}${entry.atomId}`;list.append(item);}
+  inspector.append(list);
+  const note=document.createElement('small');note.className='stereo-note';note.textContent='La priorità dipende dalla connettività, R/S dalle coordinate tridimensionali. Ruotare la vista non cambia R/S.';inspector.append(note);
+ }else{
+  const first=document.createElement('strong');first.className='stereo-not-assigned';
+  first.textContent=result.status==='not_stereogenic'?'Non stereogenico':'R/S non assegnato';inspector.append(first);
+  const reason=document.createElement('span');reason.className='stereo-note';reason.textContent=result.reason;inspector.append(reason);
+ }
+}
+
+/** E/Z inspector reflects actual 3D coordinates, not the camera orientation. */
+function refreshEZ(selectedBondObject){
+ const summary=$('ezSummary'),inspector=$('ezInfo');
+ summary.replaceChildren();inspector.replaceChildren();
+ const assigned=ezLabels.filter(x=>x.status==='assigned');
+ const other=ezLabels.length-assigned.length;
+ const heading=document.createElement('small');heading.className='muted';
+ heading.textContent=`${assigned.length} doppi legami E/Z assegnati${other?' · '+other+' non assegnati':''}`;
+ summary.append(heading);
+ if(ezLabels.length){
+  const chips=document.createElement('div');chips.className='stereo-badges';
+  for(const entry of ezLabels){
+   const button=document.createElement('button');button.type='button';
+   button.className='stereo-chip '+(entry.status==='assigned'?'assigned':'unresolved');
+   button.textContent=entry.status==='assigned'?`C${entry.firstId}=C${entry.secondId}: ${entry.descriptor}`:`C${entry.firstId}=C${entry.secondId}: ?`;
+   button.title=entry.status==='assigned'?'Visualizza le priorità CIP':entry.reason;
+   button.addEventListener('click',()=>{selectedBond=entry.bondId;selected=null;changed();});
+   chips.append(button);
+  }
+  summary.append(chips);
+ }else{
+  const info=document.createElement('span');info.textContent='Nessun doppio legame C=C individuato.';summary.append(info);
+ }
+ let result=null;
+ if(selectedBondObject)result=analyzeEZ(doc,selectedBondObject.id);
+ const btn=$('invertEZBtn');
+ btn.disabled=!selectedBondObject||result?.status!=='assigned';
+ if(!selectedBondObject){inspector.textContent='Seleziona il centro di un doppio legame C=C o premi il badge della sua configurazione.';return;}
+ if(result.status==='assigned'){
+  const title=document.createElement('strong');title.className='stereo-descriptor';
+  title.textContent=`C${result.firstId}=C${result.secondId} · ${result.descriptor}`;inspector.append(title);
+  for(const end of result.ends){
+   const sub=document.createElement('div');sub.className='stereo-priorities-title';
+   sub.textContent=`Priorità CIP sul carbonio ${end.endId}`;inspector.append(sub);
+   const list=document.createElement('ol');list.className='stereo-priorities ez-priorities';
+   for(const lig of end.ranked){const item=document.createElement('li');item.textContent=`${lig.symbol}${lig.atomId}`;list.append(item);}
+   inspector.append(list);
+  }
+  const note=document.createElement('small');note.className='stereo-note';
+  note.textContent=result.descriptor==='E'?'E = i due sostituenti prioritari sono su lati opposti.':'Z = i due sostituenti prioritari sono dallo stesso lato.';
+  inspector.append(note);
+ }else{
+  const title=document.createElement('strong');title.className='stereo-not-assigned';title.textContent='E/Z non assegnato';inspector.append(title);
+  const note=document.createElement('small');note.className='stereo-note';note.textContent=result.reason;inspector.append(note);
+ }
+}
+
+function resetCamera(refresh=true){
+ yaw=.42;pitch=-.17;
+ if(doc.atoms.length){const c=centroid(doc),radius=Math.max(...doc.atoms.map(a=>Math.hypot(a.x-c.x,a.y-c.y,a.z-c.z)));
+  zoom=Math.min(3.1,Math.max(.55,3.4/Math.max(1,radius)));
+ }else zoom=1;
+ if(refresh)render();
+}
+function cameraPoint(atom){const c=centroid(doc),x=atom.x-c.x,y=atom.y-c.y,z=atom.z-c.z;
+ const cy=Math.cos(yaw),sy=Math.sin(yaw),cp=Math.cos(pitch),sp=Math.sin(pitch);
+ const xr=x*cy-z*sy,zr=x*sy+z*cy,yr=y*cp-zr*sp,zcam=y*sp+zr*cp;
+ const scale=(Math.min(dims.w,dims.h)/9)*zoom*Math.max(.3,Math.min(3.5,10/(10-zcam)));
+ return {id:atom.id,x:dims.w/2+xr*scale,y:dims.h/2-yr*scale,z:zcam,s:scale};
+}
+function unproject(sx,sy,zcam=0,referenceCenter=null){const c=referenceCenter||centroid(doc),cy=Math.cos(yaw),syw=Math.sin(yaw),cp=Math.cos(pitch),sp=Math.sin(pitch);
+ const scale=(Math.min(dims.w,dims.h)/9)*zoom*Math.max(.3,Math.min(3.5,10/(10-zcam)));
+ const xr=(sx-dims.w/2)/scale,yr=(dims.h/2-sy)/scale;
+ const y=yr*cp+zcam*sp,zr=-yr*sp+zcam*cp;
+ return {x:c.x+xr*cy+zr*syw,y:c.y+y,z:c.z-xr*syw+zr*cy};
+}
+function atomRadius(a,p){const r=element(a.symbol).radius;
+ if(mode==='spacefill')return Math.max(8,Math.min(75,p.s*(.5+r*.34)));
+ if(mode==='sticks')return Math.max(4,Math.min(14,p.s*.12));
+ if(mode==='wire')return Math.max(3,Math.min(9,p.s*.085));
+ return Math.max(8,Math.min(32,p.s*(.12+r*.12)));
+}
+const rgb=(hex)=>hex.match(/[a-f\d]{2}/gi).map(s=>parseInt(s,16));
+function shade(hex,f){const [r,g,b]=rgb(hex);return `rgb(${Math.min(255,Math.max(0,r*f))|0},${Math.min(255,Math.max(0,g*f))|0},${Math.min(255,Math.max(0,b*f))|0})`;}
+function drawBond(b){const a=projected.find(p=>p.id===b.a),c=projected.find(p=>p.id===b.b);if(!a||!c)return;
+ const dx=c.x-a.x,dy=c.y-a.y,l=Math.hypot(dx,dy)||1,nx=-dy/l,ny=dx/l;
+ const width=mode==='wire'?1.4:mode==='sticks'?8:mode==='spacefill'?3.5:5.5;
+ const shift=b.order===1?[0]:b.order===2?[-.85,.85]:[-1.5,0,1.5];
+ const aa=findAtom(doc,b.a),cc=findAtom(doc,b.b),ca=element(aa.symbol).color,cb=element(cc.symbol).color;
+ if(selectedBond===b.id){ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(c.x,c.y);ctx.strokeStyle='#78ebdb';ctx.lineWidth=width+9;ctx.lineCap='round';ctx.stroke();}
+ ctx.lineCap='round';for(const k of shift){const d=k*(mode==='wire'?3:width*.85);
+  ctx.beginPath();ctx.moveTo(a.x+nx*d,a.y+ny*d);ctx.lineTo((a.x+c.x)/2+nx*d,(a.y+c.y)/2+ny*d);ctx.strokeStyle=mode==='wire'?shade(ca,.86):shade(ca,.9);ctx.lineWidth=width;ctx.stroke();
+  ctx.beginPath();ctx.moveTo((a.x+c.x)/2+nx*d,(a.y+c.y)/2+ny*d);ctx.lineTo(c.x+nx*d,c.y+ny*d);ctx.strokeStyle=mode==='wire'?shade(cb,.86):shade(cb,.9);ctx.lineWidth=width;ctx.stroke();
+ }
+}
+function drawAtom(a,p){const r=atomRadius(a,p),color=element(a.symbol).color;
+ if(selected===a.id||measurement.includes(a.id)||pendingBond===a.id){ctx.beginPath();ctx.arc(p.x,p.y,r+6,0,Math.PI*2);ctx.strokeStyle='#78ebdb';ctx.lineWidth=2.4;ctx.stroke();}
+ const gradient=ctx.createRadialGradient(p.x-r*.33,p.y-r*.42,Math.max(1,r*.02),p.x+r*.14,p.y+r*.14,r*1.26);
+ gradient.addColorStop(0,shade(color,1.55));gradient.addColorStop(.36,shade(color,1.13));gradient.addColorStop(.75,shade(color,.8));gradient.addColorStop(1,shade(color,.5));
+ ctx.fillStyle=gradient;ctx.beginPath();ctx.arc(p.x,p.y,r,0,Math.PI*2);ctx.fill();
+ if(mode!=='wire'&&r>=9){ctx.fillStyle=a.symbol==='H'||a.symbol==='He'?'#183047':'#f7fbff';ctx.font=`${Math.max(9,Math.min(16,r*.72))|0}px system-ui`;ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(a.symbol,p.x,p.y+.5);}
+}
+function render(){if(!ctx)return;const rect=canvas.getBoundingClientRect();const w=Math.max(1,rect.width),h=Math.max(1,rect.height);
+ const pixelRatio=Math.min(window.devicePixelRatio||1,2);if(canvas.width!==Math.round(w*pixelRatio)||canvas.height!==Math.round(h*pixelRatio)){canvas.width=Math.round(w*pixelRatio);canvas.height=Math.round(h*pixelRatio);}dims={w,h};ctx.setTransform(pixelRatio,0,0,pixelRatio,0,0);ctx.clearRect(0,0,w,h);
+ projected=doc.atoms.map(cameraPoint);
+ const items=[...doc.bonds.map(b=>({type:'bond',depth:((projected.find(p=>p.id===b.a)?.z||0)+(projected.find(p=>p.id===b.b)?.z||0))/2,obj:b})),...doc.atoms.map(a=>({type:'atom',depth:projected.find(p=>p.id===a.id)?.z||0,obj:a}))];
+ items.sort((a,b)=>a.depth-b.depth|| (a.type==='bond'?-1:1));for(const entry of items)if(entry.type==='bond')drawBond(entry.obj);else drawAtom(entry.obj,projected.find(p=>p.id===entry.obj.id));
+ stereoLabels=summarizeCIP(doc);
+ ezLabels=summarizeEZ(doc);
+ if($('showRSLabels').checked){
+  ctx.textAlign='center';ctx.textBaseline='middle';
+  for(const center of stereoLabels.filter(c=>c.status==='assigned')){
+   const p=projected.find(pt=>pt.id===center.id);if(!p)continue;
+   const at=findAtom(doc,center.id);const offset=atomRadius(at,p)+12;
+   const x=p.x+offset,y=p.y-offset;
+   ctx.fillStyle=center.descriptor==='R'?'#e6b65b':'#73dcdb';ctx.beginPath();ctx.arc(x,y,13,0,2*Math.PI);ctx.fill();
+   ctx.fillStyle='#101d30';ctx.font='800 13px system-ui';ctx.fillText(center.descriptor,x,y+.4);
+  }
+  if(selected!=null){
+   const active=stereoLabels.find(item=>item.id===selected&&item.status==='assigned');
+   if(active)for(const priority of active.priorities){
+    const p=projected.find(v=>v.id===priority.atomId);if(!p)continue;
+    const a=findAtom(doc,priority.atomId);const off=atomRadius(a,p)+10;
+    const x=p.x+off*.66,y=p.y+off*.65;
+    ctx.beginPath();ctx.arc(x,y,10,0,2*Math.PI);ctx.fillStyle='#fff1cf';ctx.fill();
+    ctx.fillStyle='#0f1c2b';ctx.font='800 11px system-ui';ctx.fillText(priority.rank,x,y);
+   }
+  }
+ }
+ if($('showEZLabels').checked){
+  ctx.textAlign='center';ctx.textBaseline='middle';
+  for(const edge of ezLabels.filter(item=>item.status==='assigned')){
+   const p=projected.find(v=>v.id===edge.firstId),q=projected.find(v=>v.id===edge.secondId);
+   if(!p||!q)continue;
+   const x=(p.x+q.x)/2,y=(p.y+q.y)/2;
+   const vx=q.x-p.x,vy=q.y-p.y,len=Math.hypot(vx,vy)||1;
+   const cx=x-vy/len*23,cy=y+vx/len*23;
+   ctx.fillStyle=edge.descriptor==='E'?'#f4c687':'#b3a3ff';ctx.beginPath();ctx.arc(cx,cy,12,0,2*Math.PI);ctx.fill();
+   ctx.fillStyle='#152132';ctx.font='800 13px system-ui';ctx.fillText(edge.descriptor,cx,cy);
+   if(edge.bondId===selectedBond){
+    for(const end of edge.ends){
+     for(const rank of end.ranked){
+      const pos=projected.find(v=>v.id===rank.atomId);if(!pos)continue;
+      const atom=findAtom(doc,rank.atomId),offset=atomRadius(atom,pos)+11;
+      const xx=pos.x+offset*.7,yy=pos.y+offset*.7;
+      ctx.beginPath();ctx.arc(xx,yy,10,0,2*Math.PI);ctx.fillStyle='#fdf3ca';ctx.fill();
+      ctx.fillStyle='#101d30';ctx.font='800 11px system-ui';ctx.fillText(rank.rank,xx,yy);
+     }
+    }
+   }
+  }
+ }
+
+}
+function localPos(event){const r=canvas.getBoundingClientRect();return {x:event.clientX-r.left,y:event.clientY-r.top};}
+function pick(x,y){let id=null,best=-Infinity;for(const p of projected){const a=findAtom(doc,p.id),radius=atomRadius(a,p)+7,d=Math.hypot(x-p.x,y-p.y);if(d<=Math.max(12,radius)){const score=-d/Math.max(10,radius)+p.z*.04;if(score>best){best=score;id=p.id;}}}
+ if(id!==null)return {type:'atom',id};
+ for(const b of doc.bonds){const a=projected.find(p=>p.id===b.a),c=projected.find(p=>p.id===b.b);if(!a||!c)continue;const vx=c.x-a.x,vy=c.y-a.y,lengthSq=vx*vx+vy*vy;if(!lengthSq)continue;
+ const t=Math.max(0,Math.min(1,((x-a.x)*vx+(y-a.y)*vy)/lengthSq)),d=Math.hypot(x-(a.x+t*vx),y-(a.y+t*vy));if(d<9)return {type:'bond',id:b.id};
+ }
+ return null;
+}
+function clickScene(x,y){const p=pick(x,y);if(tool==='view'||tool==='select'||tool==='move'){selected=p?.type==='atom'?p.id:null;selectedBond=p?.type==='bond'?p.id:null;changed();return;}
+ if(tool==='atom'){if(p?.type==='atom'){selected=p.id;selectedBond=null;toast(`Atomo ${p.id} scelto. Clicca uno spazio libero per collegarne un altro.`);changed();return;}
+  let pos;if(selected&&findAtom(doc,selected)){
+   const anchor=findAtom(doc,selected),cam=projected.find(p=>p.id===anchor.id),approx=unproject(x,y,cam?.z||0);
+   let vec=[approx.x-anchor.x,approx.y-anchor.y,approx.z-anchor.z],m=Math.hypot(...vec);
+   if(m<.3){pos=suggestedPosition(doc,anchor.id);}else{const len=element(anchor.symbol).radius+element($('elemSelect').value).radius;pos={x:anchor.x+vec[0]*len/m,y:anchor.y+vec[1]*len/m,z:anchor.z+vec[2]*len/m};}
+  }else pos=unproject(x,y,0);
+  let created=null;applyMutator(()=>{created=addAtom(doc,$('elemSelect').value,pos.x,pos.y,pos.z,selected&&findAtom(doc,selected)?selected:null,Number($('bondOrder').value));});if(created){selected=created;changed();}return;
+ }
+ if(tool==='bond'){if(p?.type!=='atom'){toast('Seleziona un atomo.');return;}
+  if(pendingBond===null){pendingBond=p.id;selected=p.id;selectedBond=null;changed();toast('Seleziona il secondo atomo del legame.');return;}
+  if(pendingBond!==p.id){const a=pendingBond;applyMutator(()=>setBond(doc,a,p.id,Number($('bondOrder').value)));selected=p.id;}
+  pendingBond=null;changed();return;
+ }
+ if(tool==='measure'){if(p?.type!=='atom')return;
+  const n=Number($('measurementType').value);if(measurement.length>=n)measurement=[];measurement.push(p.id);selected=p.id;selectedBond=null;changed();return;
+ }
+ if(tool==='delete'){if(!p)return;
+  if(p.type==='atom')applyMutator(()=>eraseAtom(doc,p.id));else applyMutator(()=>eraseBond(doc,p.id));selected=null;selectedBond=null;changed();}
+}
+function setupPointer(){
+ const pointers=new Map();let pinch=null,multiTouch=false;
+ const pointerDistance=()=>{const p=[...pointers.values()];return Math.hypot(p[0].x-p[1].x,p[0].y-p[1].y);};
+ canvas.addEventListener('pointerdown',e=>{
+  if(e.pointerType==='mouse'&&e.button!==0&&e.button!==1)return;
+  canvas.setPointerCapture(e.pointerId);const pos=localPos(e);pointers.set(e.pointerId,pos);
+  if(pointers.size===1){
+   pointerStart={...pos,yaw,pitch,button:e.button};dragging=false;
+   if(tool==='move'&&e.button===0){const hit=pick(pos.x,pos.y);
+    if(hit?.type==='atom'){
+     const projectedAtom=projected.find(p=>p.id===hit.id);
+     pointerStart.moving={id:hit.id,depth:projectedAtom.z,refCenter:centroid(doc),offsetX:pos.x-projectedAtom.x,offsetY:pos.y-projectedAtom.y,original:clone(doc)};
+     selected=hit.id;selectedBond=null;changed();
+    }
+   }
+  }else if(pointers.size>=2){
+   if(pointerStart?.moving){doc=pointerStart.moving.original;changed();}
+   multiTouch=true;pointerStart=null;pinch={distance:Math.max(5,pointerDistance()),zoom};
+  }
+ });
+ canvas.addEventListener('pointermove',e=>{
+  if(!pointers.has(e.pointerId))return;const pos=localPos(e);pointers.set(e.pointerId,pos);
+  if(pointers.size>=2&&pinch){zoom=Math.min(4.5,Math.max(.25,pinch.zoom*pointerDistance()/pinch.distance));render();return;}
+  if(multiTouch||!pointerStart)return;
+  const dx=pos.x-pointerStart.x,dy=pos.y-pointerStart.y;
+  if(Math.hypot(dx,dy)>5)dragging=true;
+  if(dragging&&pointerStart.moving){
+   const m=pointerStart.moving,point=unproject(pos.x-m.offsetX,pos.y-m.offsetY,m.depth,m.refCenter);
+   try{setAtomPosition(doc,m.id,point.x,point.y,point.z);render();refreshPanel();}catch(err){toast(err.message);}
+  }else if(dragging&&(tool==='view'||pointerStart.button===1)){
+   yaw=pointerStart.yaw+dx*.008;pitch=Math.max(-Math.PI/2+.01,Math.min(Math.PI/2-.01,pointerStart.pitch+dy*.008));render();
+  }
+ });
+ function endPointer(e,canceled=false){
+  if(!pointers.has(e.pointerId))return;
+  const wasMulti=multiTouch,wasDrag=dragging,pos=localPos(e),start=pointerStart;
+  const didRotate=(tool==='view'||start?.button===1);
+  pointers.delete(e.pointerId);pointerStart=null;dragging=false;
+  if(start?.moving){
+   if(canceled){doc=start.moving.original;changed();}
+   else if(wasDrag){remember(start.moving.original);changed();}
+   else if(!wasMulti){selected=start.moving.id;selectedBond=null;changed();}
+  }else if(!wasMulti&&!canceled&&!wasDrag&&e.button===0)clickScene(pos.x,pos.y);
+  else if(!wasMulti&&!canceled&&wasDrag&&!didRotate)toast('Trascina con «Sposta» oppure scegli «Ruota» per orientare la scena.');
+  if(pointers.size===0){pinch=null;multiTouch=false;}
+ }
+ canvas.addEventListener('pointerup',e=>endPointer(e));
+ canvas.addEventListener('pointercancel',e=>endPointer(e,true));
+ canvas.addEventListener('wheel',e=>{e.preventDefault();zoom=Math.min(4.5,Math.max(.25,zoom*Math.exp(-e.deltaY*.001)));render();},{passive:false});
+ canvas.addEventListener('dblclick',()=>resetCamera());
+ new ResizeObserver(render).observe(canvas);
+}
+
+function exportFile(){let content,ext,mime='text/plain;charset=utf-8';const format=$('exportFormat').value;
+ try{if(format==='mol'){content=exportMOL(doc);ext='mol';}else if(format==='xyz'){content=exportXYZ(doc);ext='xyz';}else if(format==='cjson'){content=exportCJSON(doc);ext='cjson';mime='application/json';}else{content=exportProject(doc);ext='json';mime='application/json';}}catch(e){toast(e.message);return;}
+ const blob=new Blob([content],{type:mime}),url=URL.createObjectURL(blob),link=document.createElement('a');
+ link.href=url;link.download=`molecolalab-${(doc.name||'molecola').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9-]/g,'-').slice(0,36)}.${ext}`;
+ document.body.appendChild(link);link.click();link.remove();setTimeout(()=>URL.revokeObjectURL(url),1500);
+ if(format==='mlab')dirty=false;toast(`Esportato ${ext.toUpperCase()}. I dati sono rimasti nel tuo browser.`);
+}
+function openFile(){const input=$('fileInput');input.value='';input.click();}
+function guessLoader(text,name){const low=name.toLowerCase();if(low.endsWith('.cjson'))return importCJSON(text);if(low.endsWith('.json')||low.endsWith('.mlab')){const parsed=JSON.parse(text);return parsed?.chemicalJson===1?importCJSON(text):importProject(text);}
+ if(low.endsWith('.xyz'))return importXYZ(text);
+ if(low.endsWith('.mol')||low.endsWith('.sdf'))return importMOL(text.split(/\$\$\$\$/)[0]);
+ throw Error('Formato file non riconosciuto: usa .mol, .sdf, .xyz, .json o .cjson.');}
+function setup(){initElements();setupPointer();setTool('view');
+ document.querySelectorAll('[data-tool]').forEach(b=>b.addEventListener('click',()=>setTool(b.dataset.tool)));
+ $('presets').addEventListener('change',e=>{if(e.target.value&&PRESETS[e.target.value]){if(replaceDoc(PRESETS[e.target.value]()))toast('Modello di esempio caricato.');}e.target.value='';});
+ $('startExample').addEventListener('click',()=>replaceDoc(PRESETS.water()));
+ $('displayMode').addEventListener('change',e=>{mode=e.target.value;render();});
+ $('newBtn').addEventListener('click',()=>replaceDoc(blank()));$('openBtn').addEventListener('click',openFile);$('saveBtn').addEventListener('click',exportFile);
+ $('fileInput').addEventListener('change',async e=>{const file=e.target.files?.[0];if(!file)return;if(file.size>2e6){toast('File troppo grande (massimo 2 MB).');return;}
+  try{const raw=await file.text();const model=guessLoader(raw,file.name);
+   if(file.name.toLowerCase().endsWith('.cjson')||(file.name.toLowerCase().endsWith('.json')&&JSON.parse(raw)?.chemicalJson===1)){
+    const extra=unhandledCJSONFields(raw);
+    if(extra.length&&!confirm('Il file CJSON contiene dati non supportati ('+extra.slice(0,8).join(', ')+'). Verranno importati SOLO atomi, coordinate, cariche e legami; gli altri dati non saranno conservati. Conserva il file originale. Continuare?'))return;
+   }
+   if(replaceDoc(model))toast('File importato. Controlla cariche, connettività e proprietà scientifiche.');
+  }catch(err){toast('Importazione fallita: '+err.message);}
+ });
+ $('undoBtn').addEventListener('click',undoStep);$('redoBtn').addEventListener('click',redoStep);
+ $('addHsBtn').addEventListener('click',()=>{let n=0;applyMutator(()=>{n=hydrogenate(doc);});toast(n?`Aggiunti ${n} H secondo le valenze neutre semplificate.`:'Nessun H da aggiungere secondo la regola semplificata.');});
+ $('regularizeBtn').addEventListener('click',()=>{if(doc.atoms.length>220){toast('Riordino grafico disponibile fino a 220 atomi in questa versione.');return;}applyMutator(()=>regularize(doc));toast('Riordinata la spaziatura (non è un’ottimizzazione energetica).');});
+ $('centerBtn').addEventListener('click',()=>{applyMutator(()=>center(doc));toast('Coordinate centrate.');});
+ $('resetCameraBtn').addEventListener('click',()=>resetCamera());
+ $('showRSLabels').addEventListener('change',()=>render());
+ $('showEZLabels').addEventListener('change',()=>render());
+ $('invertEZBtn').addEventListener('click',()=>{if(selectedBond==null)return;let result=null;
+  applyMutator(()=>{result=invertEZ(doc,selectedBond);});
+  if(result)toast(`Creato isomero ${result.after} dal precedente ${result.before}. La modifica non rappresenta una rotazione fisica del doppio legame.`);
+ });
+ $('mirrorBtn').addEventListener('click',()=>{applyMutator(()=>mirrorMolecule(doc));toast('Molecola speculare creata: le configurazioni dei centri definiti vengono invertite.');});
+ $('renameBtn').addEventListener('click',()=>{const name=$('renameInput').value.trim();if(!name){toast('Inserisci un nome non vuoto.');return;}applyMutator(()=>{doc.name=name.slice(0,80);});});
+ $('clearSelection').addEventListener('click',clearSelection);
+ $('selectedElement').addEventListener('change',e=>{if(selected!=null){applyMutator(()=>setAtomElement(doc,selected,e.target.value));toast('Elemento modificato: verifica legami, cariche e valenze.');}});
+ $('applyCoords').addEventListener('click',()=>{if(selected==null)return;const raw=['X','Y','Z'].map(axis=>$('atom'+axis).value.trim());if(raw.some(v=>v==='')){toast('Inserisci tutte le coordinate.');return;}applyMutator(()=>setAtomPosition(doc,selected,...raw.map(Number)));});
+ $('selectedBondOrder').addEventListener('change',e=>{const b=doc.bonds.find(b=>b.id===selectedBond);if(b)applyMutator(()=>setBond(doc,b.a,b.b,Number(e.target.value)));});
+ $('applyBondLength').addEventListener('click',()=>{if(selectedBond==null)return;const raw=$('selectedBondLength').value.trim();if(!raw){toast('Inserisci una lunghezza in Å.');return;}applyMutator(()=>setBondLength(doc,selectedBond,Number(raw)));});
+ $('removeSelectedBond').addEventListener('click',()=>{if(selectedBond==null)return;applyMutator(()=>eraseBond(doc,selectedBond));selectedBond=null;changed();});
+ $('removeSelected').addEventListener('click',()=>{if(selected==null)return;applyMutator(()=>eraseAtom(doc,selected));selected=null;changed();});
+ $('atomCharge').addEventListener('change',e=>{if(selected==null)return;applyMutator(()=>{const a=findAtom(doc,selected);if(a)a.charge=Number(e.target.value);});});
+ $('readDihedralBtn').addEventListener('click',()=>{
+  try{const ids=['A','B','C','D'].map(letter=>Number($('torsion'+letter).value.trim()));
+    if(ids.some(id=>!Number.isSafeInteger(id)||id<=0))throw Error('Inserisci quattro numeri di atomo validi.');
+    const atoms=ids.map(id=>findAtom(doc,id));if(atoms.some(a=>!a))throw Error('Uno o più atomi non esistono.');
+    const value=dihedral(...atoms);
+    if(!Number.isFinite(value))throw Error('Angolo diedro non definito per questa geometria.');
+    setDihedral(clone(doc),...ids,value); // validate actual bond sequence, cycles and bond order, without mutation
+    $('targetDihedral').value=value.toFixed(2);
+    $('dihedralFeedback').textContent=`Diedro ${ids.join('–')}: ${value.toFixed(2)}°. Puoi ora modificarlo.`;
+  }catch(e){$('dihedralFeedback').textContent=e.message;toast(e.message);}
+ });
+ $('applyDihedralBtn').addEventListener('click',()=>{
+  const raw=$('targetDihedral').value.trim();if(!raw){toast('Indica l’angolo diedro richiesto.');return;}
+  const ids=['A','B','C','D'].map(letter=>Number($('torsion'+letter).value.trim()));
+  let result;
+  applyMutator(()=>{result=setDihedral(doc,...ids,Number(raw));});
+  if(result){$('dihedralFeedback').textContent=`Diedro ${ids.join('–')}: ${result.before.toFixed(2)}° → ${result.after.toFixed(2)}°. ${result.moved} atomi del frammento spostati.`;}
+ });
+ $('clearMeasurements').addEventListener('click',()=>{measurement=[];changed();});
+ $('measurementType').addEventListener('change',()=>{measurement=[];changed();});
+ $('helpBtn').addEventListener('click',()=>{
+  const content=$('helpDialogContent');content.replaceChildren();
+  const copy=$('instructionsBody').cloneNode(true);copy.removeAttribute('id');
+  // Expand the first section for immediate orientation; the user can open the rest.
+  content.append(copy);$('helpDialog').showModal();
+ });
+ $('closeHelp').addEventListener('click',()=>$('helpDialog').close());
+ document.addEventListener('keydown',e=>{if(['INPUT','SELECT','TEXTAREA'].includes(document.activeElement?.tagName)||$('helpDialog').open)return;
+  if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='z'){e.preventDefault();e.shiftKey?redoStep():undoStep();}
+  else if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='y'){e.preventDefault();redoStep();}
+  else if(e.key==='Escape'){e.preventDefault();clearSelection();}
+  else if((e.key==='Delete'||e.key==='Backspace')&&(selected!=null||selectedBond!=null)){
+   e.preventDefault();if(selected!=null)applyMutator(()=>eraseAtom(doc,selected));else applyMutator(()=>eraseBond(doc,selectedBond));clearSelection();
+  }
+ });
+ window.addEventListener('beforeunload',e=>{if(dirty&&doc.atoms.length){e.preventDefault();e.returnValue='';}});
+ changed();
+}
+function undoStep(){if(!undo.length)return;redo.push(clone(doc));doc=undo.pop();selected=null;selectedBond=null;pendingBond=null;measurement=[];dirty=true;changed();}
+function redoStep(){if(!redo.length)return;undo.push(clone(doc));doc=redo.pop();selected=null;selectedBond=null;pendingBond=null;measurement=[];dirty=true;changed();}
+setup();
+
+</script>
+</body>
+</html>
